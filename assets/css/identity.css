@@ -1,0 +1,160 @@
+/* ==========================================================================
+   EMSP DOCS — IDENTITÉ VISUELLE & DIRECTION ARTISTIQUE
+   Philosophie : Identité -> Composition -> Typographie -> Espacement -> Hiérarchie -> Composants -> Tokens
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Direction Couleur EMSP (HSL tailleur) */
+  --emsp-brand-hue: 158;
+  --emsp-brand-sat: 100%;
+  --emsp-brand-light: 21%;
+  
+  --emsp-primary: hsl(var(--emsp-brand-hue), var(--emsp-brand-sat), var(--emsp-brand-light));
+  --emsp-primary-hover: hsl(var(--emsp-brand-hue), var(--emsp-brand-sat), calc(var(--emsp-brand-light) - 6%));
+  --emsp-primary-light: hsl(var(--emsp-brand-hue), 50%, 94%);
+  --emsp-primary-alpha: hsla(var(--emsp-brand-hue), var(--emsp-brand-sat), var(--emsp-brand-light), 0.12);
+
+  /* Accents Or Académique */
+  --emsp-gold: #F5A800;
+  --emsp-gold-light: #FFF4CC;
+  --emsp-gold-alpha: rgba(245, 168, 0, 0.16);
+
+  /* Palette Neutre - Thème Clair Premium */
+  --emsp-bg-main: #F8FAFC;
+  --emsp-bg-surface: #FFFFFF;
+  --emsp-bg-glass: rgba(255, 255, 255, 0.85);
+  --emsp-border-color: #E2E8F0;
+  --emsp-border-hover: #CBD5E1;
+  
+  --emsp-text-main: #0F172A;
+  --emsp-text-muted: #64748B;
+  --emsp-text-light: #94A3B8;
+
+  /* Statuts fonctionnels */
+  --emsp-success: #10B981;
+  --emsp-success-bg: #ECFDF5;
+  --emsp-warning: #F59E0B;
+  --emsp-warning-bg: #FFFBEB;
+  --emsp-danger: #EF4444;
+  --emsp-danger-bg: #FEF2F2;
+  --emsp-info: var(--emsp-color-primary, #006B3C);
+  --emsp-info-bg: #EFF6FF;
+
+  /* Ombres & Élevations — utiliser avec parcimonie (pas sur chaque bloc) */
+  --emsp-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --emsp-shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --emsp-shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  --emsp-shadow-glow: 0 0 20px hsla(var(--emsp-brand-hue), var(--emsp-brand-sat), var(--emsp-brand-light), 0.25);
+
+  /* Rayons de bordure */
+  --emsp-radius-sm: 8px;
+  --emsp-radius-md: 14px;
+  --emsp-radius-lg: 20px;
+  --emsp-radius-full: 9999px;
+
+  /* Transitions */
+  --emsp-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --emsp-transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* =====================================================================
+     EMSP CANONICAL DESIGN SYSTEM
+     One spacing/radius/elevation scale shared by all components.
+     Legacy aliases below remain available for existing views.
+     ===================================================================== */
+  --emsp-space-1: 4px;
+  --emsp-space-2: 8px;
+  --emsp-space-3: 12px;
+  --emsp-space-4: 16px;
+  --emsp-space-5: 20px;
+  --emsp-space-6: 24px;
+  --emsp-space-8: 32px;
+  --emsp-space-10: 40px;
+  --emsp-space-12: 48px;
+  --emsp-space-16: 64px;
+  --emsp-space-20: 80px;
+  --emsp-space-24: 96px;
+
+  --emsp-radius-xs: 4px;
+  --emsp-radius-sm: 8px;
+  --emsp-radius-md: 12px;
+  --emsp-radius-lg: 16px;
+  --emsp-radius-xl: 24px;
+  --emsp-radius-full: 9999px;
+
+  --emsp-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+
+  /* Semantic color roles: components should consume roles, not hex values. */
+  --emsp-color-primary: #006B3C;
+  --emsp-color-primary-hover: #004D2A;
+  --emsp-mobile-nav-height: 84px;
+  --emsp-color-primary-soft: #E8F5EE;
+  --emsp-color-accent: #F5A800;
+  --emsp-color-accent-hover: #D4900A;
+  --emsp-color-accent-soft: #FFF4CC;
+  --emsp-color-success: #10B981;
+  --emsp-color-warning: #D4900A;
+  --emsp-color-danger: #DC2626;
+  --emsp-color-info: #006B3C;
+
+  --emsp-content-max: 1280px;
+  --emsp-content-wide: 1440px;
+  --emsp-content-narrow: 860px;
+  --emsp-touch-target: 44px;
+  --emsp-control-height: 44px;
+
+  /* Canonical EMSP aliases: one green/or identity, while keeping legacy names usable. */
+  --color-primary: var(--emsp-color-primary);
+  --color-primary-dark: var(--emsp-color-primary-hover);
+  --color-primary-light: var(--emsp-color-primary-soft);
+  --color-accent: var(--emsp-color-accent);
+  --color-accent-dark: var(--emsp-color-accent-hover);
+  --emsp-bg: var(--emsp-bg-main);
+  --emsp-surface: var(--emsp-bg-surface);
+  --emsp-text-primary: var(--emsp-text-main);
+  --emsp-text-secondary: var(--emsp-text-muted);
+  --emsp-border: var(--emsp-border-color);
+  --emsp-green: var(--emsp-color-primary);
+  --emsp-green-dark: var(--emsp-color-primary-hover);
+  --emsp-orange: var(--emsp-color-accent-hover);
+}
+
+/* Support Dark Mode Automatique & Manuel */
+[data-theme="dark"], body.dark-mode {
+  --emsp-bg-main: #0B131F;
+  --emsp-bg-surface: #131E2F;
+  --emsp-bg-glass: rgba(19, 30, 47, 0.85);
+  --emsp-border-color: #1E293B;
+  --emsp-border-hover: #334155;
+
+  --emsp-text-main: #F8FAFC;
+  --emsp-text-muted: #94A3B8;
+  --emsp-text-light: #64748B;
+
+  --emsp-primary-light: hsla(var(--emsp-brand-hue), 50%, 20%, 0.4);
+  --emsp-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --emsp-shadow-md: 0 6px 16px rgba(0, 0, 0, 0.35);
+  --emsp-shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Base Body Design */
+body {
+  background-color: var(--emsp-bg-main);
+  color: var(--emsp-text-main);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Glassmorphism — exceptionnel uniquement (overlay, héro), pas comme langage global */
+.emsp-glass {
+  background: var(--emsp-bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--emsp-border-color);
+}

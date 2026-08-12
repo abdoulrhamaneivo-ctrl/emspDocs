@@ -1,0 +1,22 @@
+{
+  "name": "emsp_docs",
+  "version": "1.0.0",
+  "description": "Tests E2E et validation JavaScript du projet EMSP",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "npx playwright test",
+    "test:e2e": "npx playwright test",
+    "test:smoke": "npx playwright test --grep @smoke",
+    "validate:js": "node scripts/validate-js.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "playwright": "^1.59.1"
+  },
+  "private": true
+}

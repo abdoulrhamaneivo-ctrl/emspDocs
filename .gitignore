@@ -1,0 +1,44 @@
+# Logs et debug
+debug_email.txt
+*.log
+debug_*.txt
+rapport_complet.txt
+rapport_*.txt
+
+# Config secrets
+.env
+.env.*
+admin/config/config.php
+
+# Dépendances
+node_modules/
+vendor/
+.phpunit.cache/
+
+# Uploads (contenu, pas le dossier)
+/uploads/*
+!/uploads/.gitkeep
+/admin/uploads/*
+!/admin/uploads/.gitkeep
+
+# Fichiers temporaires et outils
+.tmp-*
+composer.phar
+*.bak
+*.tmp
+/*.zip
+
+# Artefacts OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dashboard template dependencies
+dashboard/**/node_modules/
+dashboard/**/dist/
+dashboard/**/.git/

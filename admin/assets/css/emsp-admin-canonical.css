@@ -1,0 +1,115 @@
+/* Canonical bridge for the remaining direct administration pages.
+   It keeps their existing business logic while giving them the same clear
+   EMSP visual system as the routed administration screens. */
+:root { --admin-green: #006B3C; --admin-green-deep: #004D2A; --admin-gold: #D59A12; }
+
+body.admin-route-badge-or-batch,
+body.admin-route-edit-institution {
+  background: #F5F8F6 !important;
+  color: #132018 !important;
+}
+
+body.admin-route-badge-or-batch .wrapper,
+body.admin-route-edit-institution .wrapper,
+body.admin-route-badge-or-batch #main-content,
+body.admin-route-edit-institution #main-content {
+  background: #F5F8F6 !important;
+  color: #132018 !important;
+}
+
+body.admin-route-badge-or-batch #admin-content,
+body.admin-route-edit-institution #admin-content {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 3vw, 2.75rem) !important;
+}
+
+body.admin-route-badge-or-batch #miniSidebar,
+body.admin-route-edit-institution #miniSidebar {
+  background: linear-gradient(180deg, #005C35, #003D25) !important;
+}
+
+body.admin-route-badge-or-batch #miniSidebar .nav-link.active,
+body.admin-route-edit-institution #miniSidebar .nav-link.active {
+  color: #132018 !important;
+  background: var(--admin-gold) !important;
+  box-shadow: none !important;
+}
+
+body.admin-route-badge-or-batch .card,
+body.admin-route-edit-institution .card {
+  border: 1px solid #DDE7E0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 28px rgba(19, 32, 24, .06) !important;
+  background: #fff !important;
+}
+
+body.admin-route-badge-or-batch .table,
+body.admin-route-edit-institution .table { --cui-table-bg: transparent; color: #132018; }
+body.admin-route-badge-or-batch .table thead,
+body.admin-route-edit-institution .table thead { background: #F0F5F1; color: #31513E; }
+body.admin-route-badge-or-batch .table td,
+body.admin-route-badge-or-batch .table th,
+body.admin-route-edit-institution .table td,
+body.admin-route-edit-institution .table th { border-color: #E1E9E3 !important; }
+
+body.admin-route-badge-or-batch .btn-primary,
+body.admin-route-edit-institution .btn-primary { background: var(--admin-green) !important; border-color: var(--admin-green) !important; }
+body.admin-route-badge-or-batch .btn-outline-secondary,
+body.admin-route-edit-institution .btn-outline-secondary { border-color: #B9CDBE !important; color: var(--admin-green-deep) !important; }
+
+@media (max-width: 767.98px) {
+  body.admin-route-badge-or-batch #admin-content,
+  body.admin-route-edit-institution #admin-content,
+  body.emsp-admin-body .emsp-admin-content {
+    padding: 0 !important;
+  }
+
+  body.admin-route-badge-or-batch .card,
+  body.admin-route-edit-institution .card,
+  body.emsp-admin-body .emsp-admin-content .card {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  body.admin-route-badge-or-batch .form-control,
+  body.admin-route-edit-institution .form-control,
+  body.admin-route-badge-or-batch .form-select,
+  body.admin-route-edit-institution .form-select,
+  body.admin-route-badge-or-batch .btn,
+  body.admin-route-edit-institution .btn {
+    min-height: 48px;
+    border-radius: 0;
+    font-size: 16px;
+  }
+
+  body.admin-route-badge-or-batch .table-responsive,
+  body.admin-route-edit-institution .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 991.98px) {
+  body.admin-route-badge-or-batch #admin-content,
+  body.admin-route-edit-institution #admin-content { padding: 1rem !important; }
+}
+
+/* Force fond clair même si le thème sombre CoreUI est actif (évite la zone noire vide). */
+body.admin-route-badge-or-batch .body,
+body.admin-route-edit-institution .body,
+body.admin-route-badge-or-batch .wrapper,
+body.admin-route-edit-institution .wrapper,
+[data-coreui-theme="dark"] body.admin-route-badge-or-batch,
+[data-coreui-theme="dark"] body.admin-route-edit-institution,
+[data-coreui-theme="dark"] body.admin-route-badge-or-batch .body,
+[data-coreui-theme="dark"] body.admin-route-edit-institution .body,
+[data-coreui-theme="dark"] body.admin-route-badge-or-batch .wrapper,
+[data-coreui-theme="dark"] body.admin-route-edit-institution .wrapper,
+[data-coreui-theme="dark"] body.admin-route-badge-or-batch #main-content,
+[data-coreui-theme="dark"] body.admin-route-edit-institution #main-content {
+  background: #F5F8F6 !important;
+  color: #132018 !important;
+}

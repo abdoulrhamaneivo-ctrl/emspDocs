@@ -1,0 +1,2108 @@
+/* ============================================================
+   emsp-fixes.css — Correctifs globaux EMSP Admin
+   À charger en DERNIER dans header.php
+   ============================================================ */
+
+/* -------------------------------------------------------
+   1. Variables manquantes (admin-phase-pages.css en avait
+      besoin mais elles n'étaient définies nulle part)
+   ------------------------------------------------------- */
+:root,
+html.theme-harvard {
+    /* Palette de base */
+    --color-primary:          #006B3C;
+    --color-primary-dark:     #004D2A;
+    --color-primary-light:    #e8f5ee;
+    --color-accent:           #F5A800;
+    --color-accent-dark:      #c98a00;
+    --color-success:          #16a34a;
+    --color-error:            #dc2626;
+    --color-border:           #e2e8f0;
+
+    /* Texte */
+    --color-text:             #0f172a;
+    --color-text-secondary:   #475569;
+
+    /* Typo */
+    --font-sans:   "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-serif:  "Outfit", "Georgia", serif;
+
+    /* Ombres */
+    --shadow-sm:  0 1px 3px rgba(15,30,60,.07), 0 1px 2px rgba(15,30,60,.05);
+    --shadow-md:  0 4px 16px rgba(15,30,60,.10);
+}
+
+/* -------------------------------------------------------
+   2. Texte muted — le rendre lisible (trop transparent avant)
+   ------------------------------------------------------- */
+.text-muted,
+html.theme-harvard .text-muted,
+.small.text-muted,
+html.theme-harvard .small.text-muted {
+    color: #64748b !important;
+    opacity: 1 !important;
+}
+
+/* -------------------------------------------------------
+   3. Cards journal / KPI — labels visibles
+   ------------------------------------------------------- */
+.card .small.text-muted,
+.card-body .small.text-muted {
+    color: #64748b !important;
+    font-size: 0.8rem !important;
+    display: block !important;
+    margin-top: 2px;
+}
+
+/* -------------------------------------------------------
+   4. Dashboard sparkline cards — forcer les couleurs
+   ------------------------------------------------------- */
+.card.bg-primary  { background-color: #006B3C !important; }
+.card.bg-info     { background-color: var(--emsp-color-primary, #006B3C) !important; }
+.card.bg-warning  { background-color: #F5A800 !important; }
+.card.bg-danger   { background-color: #ef4444 !important; }
+.card.bg-success  { background-color: #16a34a !important; }
+
+.card.bg-primary  .card-body,
+.card.bg-info     .card-body,
+.card.bg-warning  .card-body,
+.card.bg-danger   .card-body,
+.card.bg-success  .card-body {
+    background: transparent !important;
+}
+
+/* Texte blanc sur cartes colorées */
+.card.bg-primary *,
+.card.bg-info    *,
+.card.bg-danger  *,
+.card.bg-success * {
+    color: #fff !important;
+}
+.card.bg-warning *  { color: #1f1f1f !important; }
+
+/* -------------------------------------------------------
+   5. Progress bars — couleur principale (pas noire)
+   ------------------------------------------------------- */
+.progress {
+    background-color: #e2e8f0 !important;
+    border-radius: 999px !important;
+}
+.progress-bar {
+    background-color: #006B3C !important;
+    border-radius: 999px !important;
+}
+.progress-bar.bg-success { background-color: #16a34a !important; }
+.progress-bar.bg-danger  { background-color: #ef4444 !important; }
+.progress-bar.bg-warning { background-color: #F5A800 !important; }
+.progress-bar.bg-info    { background-color: var(--emsp-color-primary, #006B3C) !important; }
+
+/* -------------------------------------------------------
+   6. Stats page — héro section lisible
+   ------------------------------------------------------- */
+.admin-stats-hero {
+    background: linear-gradient(135deg, #006B3C 0%, #004D2A 100%) !important;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+.admin-stats-hero * { color: #fff !important; }
+.admin-stats-hero .admin-stats-hero-card {
+    background: rgba(255,255,255,.12) !important;
+    border: 1px solid rgba(255,255,255,.2) !important;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+}
+.admin-stats-hero .admin-stats-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: rgba(245,168,0,.2);
+    border: 1px solid rgba(245,168,0,.4);
+    color: #F5A800 !important;
+    border-radius: 999px;
+    padding: .25rem .75rem;
+    font-size: .8rem;
+    font-weight: 600;
+    margin-bottom: .75rem;
+}
+.admin-stats-hero .admin-stats-title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    margin-bottom: .5rem;
+}
+.admin-stats-side-panel {
+    background: rgba(255,255,255,.1) !important;
+    border: 1px solid rgba(255,255,255,.2) !important;
+    border-radius: 8px;
+    padding: 1.25rem;
+    height: 100%;
+}
+
+/* Stats cards (les 4 en bas du hero) */
+.admin-stats-card {
+    background: #fff !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: var(--shadow-sm) !important;
+    padding: 1.25rem !important;
+    position: relative;
+    overflow: hidden;
+}
+.admin-stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #006B3C, #F5A800);
+    border-radius: 12px 12px 0 0;
+}
+.admin-stats-card-value {
+    font-size: clamp(1.8rem, 3vw, 2.4rem) !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    line-height: 1 !important;
+}
+.admin-stats-card-label {
+    color: #475569 !important;
+    font-size: .9rem !important;
+    margin-top: .25rem !important;
+}
+.admin-stats-card-meta {
+    color: #94a3b8 !important;
+    font-size: .8rem !important;
+    margin-top: .25rem !important;
+}
+.admin-stats-card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #006B3C, #004D2A) !important;
+    color: #fff !important;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+}
+.admin-stats-card-chip {
+    background: #f0fdf4 !important;
+    color: #166534 !important;
+    border: 1px solid #bbf7d0 !important;
+    border-radius: 999px;
+    padding: .15rem .6rem;
+    font-size: .75rem;
+    font-weight: 600;
+}
+.admin-stats-side-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,.15);
+    color: #fff !important;
+}
+.admin-stats-side-item strong { color: #fff !important; font-size: 1rem; }
+.admin-stats-side-item small  { color: rgba(255,255,255,.7) !important; font-size: .78rem; }
+.admin-stats-side-item i      { color: rgba(255,255,255,.5) !important; font-size: 1.2rem; }
+
+/* -------------------------------------------------------
+   7. Médiathèque — layout : éviter le débordement à droite
+   ------------------------------------------------------- */
+.wrapper {
+    overflow-x: hidden !important;
+    min-width: 0 !important;
+}
+#admin-content,
+#main-content {
+    overflow-x: hidden !important;
+    min-width: 0 !important;
+}
+
+/* -------------------------------------------------------
+   8. Media-categories table — actions compactes
+   ------------------------------------------------------- */
+.table td .d-flex.flex-nowrap {
+    flex-wrap: nowrap !important;
+}
+.table td {
+    vertical-align: middle !important;
+}
+
+/* -------------------------------------------------------
+   9. Vue modules / matières — tableau propre
+   ------------------------------------------------------- */
+.sb-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.sb-table thead th {
+    background: #006B3C !important;
+    color: #fff !important;
+    padding: .65rem 1rem;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.sb-table tbody tr:hover { background: #f8fafc; }
+.sb-table tbody td {
+    padding: .75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #0f172a;
+    vertical-align: middle;
+}
+
+/* -------------------------------------------------------
+   10. Badges lisibles
+   ------------------------------------------------------- */
+.sb-badge {
+    display: inline-block;
+    padding: .25rem .6rem;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 600;
+}
+.sb-badge-green { background: #dcfce7; color: #166534; }
+.sb-badge-red   { background: #fee2e2; color: #991b1b; }
+
+/* -------------------------------------------------------
+   11. Forcer la lisibilité globale (texte jamais transparent)
+   ------------------------------------------------------- */
+body, p, span, div, td, th, li, label, h1, h2, h3, h4, h5, h6 {
+    -webkit-text-fill-color: unset;
+}
+
+/* ============================================================
+   CORRECTIFS ADDITIONNELS — Session 3
+   ============================================================ */
+
+/* -------------------------------------------------------
+   A. badge-approved (manquait dans tous les CSS)
+   ------------------------------------------------------- */
+.badge-approved {
+    background: rgba(0, 107, 60, .12);
+    color: #006B3C;
+    font-weight: 600;
+}
+.badge-active {
+    background: rgba(0, 107, 60, .12);
+    color: #006B3C;
+    font-weight: 600;
+}
+.badge-pending {
+    background: rgba(245, 168, 0, .15);
+    color: #B57700;
+    font-weight: 600;
+}
+.badge-rejected {
+    background: rgba(220, 38, 38, .12);
+    color: #B91C1C;
+    font-weight: 600;
+}
+
+/* -------------------------------------------------------
+   B. table-admin — classe manquante dans view-documents
+      et view-users
+   ------------------------------------------------------- */
+.table-admin {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table-admin thead th {
+    background: #006B3C !important;
+    color: #fff !important;
+    padding: .6rem .75rem;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    font-weight: 700;
+    white-space: nowrap;
+    border: none !important;
+}
+.table-admin tbody tr {
+    background: #1a2332 !important; /* fond sombre cohérent avec le conteneur */
+    border-bottom: 1px solid rgba(255,255,255,.06) !important;
+}
+.table-admin tbody tr:hover {
+    background: rgba(0,107,60,.15) !important;
+}
+.table-admin tbody td {
+    padding: .65rem .75rem;
+    vertical-align: middle;
+    color: #e2e8f0 !important;
+    border: none !important;
+}
+.table-admin tbody td.text-muted,
+.table-admin tbody td.small {
+    color: #94a3b8 !important;
+}
+
+/* -------------------------------------------------------
+   C. Supprimer les lignes blanches fantômes dans les tableaux
+      (causées par tr:nth-child alternance blanc/gris sur fond sombre)
+   ------------------------------------------------------- */
+html.theme-harvard .table tbody tr:nth-child(odd),
+html.theme-harvard .table tbody tr:nth-child(even) {
+    background: transparent !important;
+}
+/* Réappliquer alternance SEULEMENT dans conteneurs blancs */
+html.theme-harvard .card .table tbody tr:nth-child(odd),
+html.theme-harvard .sb-card .table tbody tr:nth-child(odd) {
+    background: #fff !important;
+}
+html.theme-harvard .card .table tbody tr:nth-child(even),
+html.theme-harvard .sb-card .table tbody tr:nth-child(even) {
+    background: #f9fafb !important;
+}
+
+/* -------------------------------------------------------
+   D. Médiathèque — fix layout (zone grise à droite)
+   ------------------------------------------------------- */
+#admin-content {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+.wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+#main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+/* -------------------------------------------------------
+   E. media-categories — colonne Actions : empêcher overflow
+   ------------------------------------------------------- */
+.table td:last-child,
+.table th:last-child {
+    white-space: nowrap;
+}
+.table td form {
+    display: inline-block;
+}
+/* Boutons dans tableau : taille fixe, jamais en colonne */
+.table td .btn {
+    white-space: nowrap;
+}
+
+/* -------------------------------------------------------
+   F. Commentaires — table horizontalement scrollable
+   ------------------------------------------------------- */
+.table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* -------------------------------------------------------
+   G. view-documents : miniatures PDF manquantes
+      (remplacer la case blanche par un placeholder icône)
+   ------------------------------------------------------- */
+.doc-thumb-placeholder {
+    width: 48px; height: 56px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 1.4rem;
+}
+
+/* -------------------------------------------------------
+   H. Texte toujours lisible — jamais invisible
+   ------------------------------------------------------- */
+.text-muted { color: #64748b !important; opacity: 1 !important; }
+.small       { opacity: 1 !important; }
+
+/* -------------------------------------------------------
+   I. Mediatheque — zone upload panel visible
+   ------------------------------------------------------- */
+.mediatheque-upload-panel,
+[class*="upload-panel"],
+[class*="ajouter-media"] {
+    background: #1a2332 !important;
+    border: 1px solid rgba(255,255,255,.1) !important;
+    border-radius: 12px !important;
+}
+
+/* ============================================================
+   Dashboard UX polish — Navbar profile + KPI semantics
+   ============================================================ */
+:root {
+    --emsp-brand-green: #006B3C;
+    --emsp-brand-gold: #F5A800;
+    --emsp-kpi-info: var(--emsp-color-primary, #006B3C);
+    --emsp-kpi-danger: #ef4444;
+}
+
+.topbar-profile-item {
+    margin-left: .6rem;
+    padding-left: .6rem;
+    border-left: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.admin-profile-toggle {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    border-radius: 999px !important;
+    padding: .3rem .8rem !important;
+    gap: .65rem !important;
+}
+
+.admin-role-chip {
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-size: .66rem;
+    font-weight: 800;
+    color: var(--emsp-brand-gold) !important;
+}
+
+.kpi-card {
+    position: relative;
+    border-left: 5px solid transparent !important;
+    transition: transform .22s ease, box-shadow .22s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12) !important;
+}
+
+.kpi-card-approved { border-left-color: var(--emsp-brand-green) !important; }
+.kpi-card-active { border-left-color: var(--emsp-kpi-info) !important; }
+.kpi-card-downloads { border-left-color: var(--emsp-brand-gold) !important; }
+.kpi-card-actions { border-left-color: var(--emsp-kpi-danger) !important; }
+
+.kpi-card .card-body {
+    position: relative;
+    gap: .55rem;
+}
+
+.kpi-icon-wrap {
+    position: absolute;
+    right: 2.25rem;
+    bottom: .8rem;
+    pointer-events: none;
+}
+
+.kpi-icon-wrap i {
+    font-size: 2.2rem;
+    opacity: .16;
+}
+
+.kpi-icon-approved i { color: var(--emsp-brand-green); }
+.kpi-icon-active i { color: var(--emsp-kpi-info); }
+.kpi-icon-downloads i { color: var(--emsp-brand-gold); }
+.kpi-icon-actions i { color: var(--emsp-kpi-danger); }
+
+.kpi-card .dropdown {
+    position: relative;
+    z-index: 3;
+}
+
+.kpi-card-link {
+    z-index: 2;
+}
+
+[data-coreui-theme="dark"] .topbar-profile-item {
+    border-left-color: rgba(148, 163, 184, 0.45);
+}
+
+[data-coreui-theme="dark"] .admin-profile-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(148, 163, 184, 0.35);
+}
+
+@media (max-width: 767.98px) {
+    .admin-profile-meta {
+        display: none !important;
+    }
+    .admin-profile-toggle {
+        padding: .25rem .35rem !important;
+        gap: .35rem !important;
+    }
+    .topbar-profile-item {
+        margin-left: .35rem;
+        padding-left: .35rem;
+    }
+}
+
+/* ============================================================
+   Slim Sidebar intelligente (collapsed + hover unfold)
+   ============================================================ */
+:root {
+    --emsp-slim-w: 65px;
+    --emsp-expanded-w: 260px;
+}
+
+#admin-wrapper {
+    --sidebar-width: var(--emsp-slim-w);
+}
+
+#miniSidebar.emsp-slim-sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--emsp-slim-w) !important;
+    min-width: var(--emsp-slim-w) !important;
+    max-width: var(--emsp-slim-w) !important;
+    z-index: 1045 !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(15, 23, 42, 0.86) !important;
+    border-right: 1px solid rgba(148, 163, 184, 0.26) !important;
+    transition: width .3s ease, min-width .3s ease, max-width .3s ease, box-shadow .3s ease;
+    overflow-x: hidden;
+}
+
+#admin-wrapper.collapsed .wrapper {
+    margin-left: var(--emsp-slim-w) !important;
+}
+
+#admin-wrapper:not(.collapsed) .wrapper {
+    margin-left: var(--emsp-expanded-w) !important;
+}
+
+#admin-wrapper.collapsed #miniSidebar .sidebar-brand-full,
+#admin-wrapper.collapsed #miniSidebar .nav-title,
+#admin-wrapper.collapsed #miniSidebar .nav-label,
+#admin-wrapper.collapsed #miniSidebar .admin-user-info .overflow-hidden,
+#admin-wrapper.collapsed #miniSidebar .badge {
+    display: none !important;
+}
+
+#admin-wrapper.collapsed #miniSidebar .sidebar-brand-narrow {
+    display: inline-block !important;
+}
+
+#admin-wrapper.collapsed #miniSidebar .nav-link {
+    justify-content: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+#admin-wrapper.collapsed #miniSidebar:hover {
+    width: var(--emsp-expanded-w) !important;
+    min-width: var(--emsp-expanded-w) !important;
+    max-width: var(--emsp-expanded-w) !important;
+    box-shadow: 8px 0 24px rgba(15, 23, 42, 0.28);
+}
+
+#admin-wrapper.collapsed #miniSidebar:hover .sidebar-brand-full,
+#admin-wrapper.collapsed #miniSidebar:hover .nav-title,
+#admin-wrapper.collapsed #miniSidebar:hover .nav-label,
+#admin-wrapper.collapsed #miniSidebar:hover .admin-user-info .overflow-hidden,
+#admin-wrapper.collapsed #miniSidebar:hover .badge {
+    display: inline-block !important;
+}
+
+#admin-wrapper.collapsed #miniSidebar:hover .nav-link {
+    justify-content: flex-start !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+#miniSidebar .sidebar-toggler {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: #cbd5e1;
+    min-height: 44px;
+}
+
+#miniSidebar .sidebar-toggle-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+@media (max-width: 991.98px) {
+    #miniSidebar.emsp-slim-sidebar {
+        width: min(82vw, 300px) !important;
+        min-width: min(82vw, 300px) !important;
+        max-width: min(82vw, 300px) !important;
+    }
+}
+
+/* ============================================================
+   View Users table hardening (ID column wrap bug)
+   ============================================================ */
+.table-admin th.emsp-col-id,
+.table-admin td.emsp-col-id,
+.table-admin th:first-child,
+.table-admin td:first-child {
+    white-space: nowrap !important;
+    min-width: 50px;
+    width: 50px;
+    vertical-align: middle !important;
+}
+
+.table-admin th.emsp-col-email,
+.table-admin td.emsp-col-email {
+    max-width: 240px;
+}
+
+.table-admin th.emsp-col-filiere,
+.table-admin td.emsp-col-filiere {
+    max-width: 170px;
+}
+
+.table-admin td.emsp-col-email .text-truncate,
+.table-admin td.emsp-col-filiere .text-truncate {
+    max-width: 100%;
+}
+
+/* ============================================================
+   View documents - dense SaaS table + modal preview
+   ============================================================ */
+.emsp-docs-table th,
+.emsp-docs-table td {
+    vertical-align: middle !important;
+    padding-top: .45rem !important;
+    padding-bottom: .45rem !important;
+}
+
+.emsp-docs-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.emsp-docs-table tbody tr:hover {
+    background: rgba(148, 163, 184, 0.10) !important;
+}
+
+.emsp-docs-table .badge {
+    margin: 0 !important;
+}
+
+.emsp-preview-modal-frame {
+    min-height: 75vh;
+    border: 0;
+    background: #0f172a;
+}
+
+/* ============================================================
+   Table blackout fix: no row hover, stable readability
+   ============================================================ */
+.table-admin tr,
+.sb-table tr,
+.table-hover > tbody > tr {
+    background-color: transparent !important;
+    transition: none !important;
+}
+
+.table-admin tbody tr:hover,
+.sb-table tbody tr:hover,
+.table-hover > tbody > tr:hover,
+.table-hover > tbody > tr:hover > * {
+    background-color: transparent !important;
+}
+
+.table-admin tr::before,
+.table-admin tr::after,
+.table-admin td::before,
+.table-admin td::after,
+.sb-table tr::before,
+.sb-table tr::after,
+.sb-table td::before,
+.sb-table td::after {
+    content: none !important;
+}
+
+.table-admin th,
+.table-admin td,
+.sb-table th,
+.sb-table td {
+    vertical-align: middle !important;
+}
+
+/* Focus visual feedback on action buttons only */
+.table-admin .btn:hover,
+.table-admin .btn-sb-icon:hover,
+.sb-table .btn:hover,
+.sb-table .btn-sb-icon:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Prevent stuck skeleton/loading blocks inside table cells */
+.table-admin .placeholder,
+.table-admin .placeholder-wave,
+.table-admin .placeholder-glow,
+.sb-table .placeholder,
+.sb-table .placeholder-wave,
+.sb-table .placeholder-glow {
+    animation: none !important;
+    background: transparent !important;
+}
+
+/* ============================================================
+   View Documents - contrast hardening + no row hover
+   ============================================================ */
+.admin-route-view-documents .emsp-docs-table .emsp-doc-title,
+.admin-route-view-documents .emsp-docs-table td a {
+    color: #1a1f2c !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+}
+
+.admin-route-view-documents .emsp-docs-table .emsp-doc-author {
+    color: #334155 !important;
+    font-weight: 500;
+    opacity: 1 !important;
+}
+
+.admin-route-view-documents .emsp-docs-table .emsp-doc-date {
+    color: #334155 !important;
+    font-weight: 500;
+    opacity: 1 !important;
+}
+
+.admin-route-view-documents .emsp-docs-table tbody tr,
+.admin-route-view-documents .emsp-docs-table tbody tr:hover,
+.admin-route-view-documents .table-hover > tbody > tr:hover,
+.admin-route-view-documents .table-admin tbody tr:hover {
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: inherit !important;
+}
+
+.admin-route-view-documents .emsp-docs-table tbody tr {
+    transition: none !important;
+    border-bottom: 1px solid #edf2f7 !important;
+}
+
+.admin-route-view-documents .emsp-docs-table td {
+    padding-top: .55rem !important;
+    padding-bottom: .55rem !important;
+    padding-left: .65rem !important;
+    padding-right: .65rem !important;
+    vertical-align: middle !important;
+}
+
+.admin-route-view-documents .emsp-docs-table td > div,
+.admin-route-view-documents .emsp-docs-table td > span,
+.admin-route-view-documents .emsp-docs-table td > small {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 1.25;
+}
+
+[data-coreui-theme="dark"] .admin-route-view-documents .emsp-docs-table .emsp-doc-title {
+    color: #e5e7eb !important;
+}
+
+[data-coreui-theme="dark"] .admin-route-view-documents .emsp-docs-table .emsp-doc-author,
+[data-coreui-theme="dark"] .admin-route-view-documents .emsp-docs-table .emsp-doc-date {
+    color: #cbd5e1 !important;
+}
+
+.admin-route-view-documents .emsp-doc-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+}
+
+.admin-route-view-documents .emsp-docs-table .btn:hover {
+    transform: scale(1.06);
+    transition: transform .2s ease;
+}
+
+/* ============================================================
+   Theme-safe readable tables (view-users + view-documents)
+   ============================================================ */
+[data-coreui-theme="light"] .admin-route-view-users .table-admin td,
+[data-coreui-theme="light"] .admin-route-view-documents .table-admin td,
+[data-coreui-theme="light"] .admin-route-view-users .table-admin td strong,
+[data-coreui-theme="light"] .admin-route-view-documents .table-admin td strong,
+[data-coreui-theme="light"] .admin-route-view-users .table-admin td a,
+[data-coreui-theme="light"] .admin-route-view-documents .table-admin td a {
+    color: #1f2937 !important;
+    opacity: 1 !important;
+}
+
+[data-coreui-theme="dark"] .admin-route-view-users .table-admin td,
+[data-coreui-theme="dark"] .admin-route-view-documents .table-admin td,
+[data-coreui-theme="dark"] .admin-route-view-users .table-admin td strong,
+[data-coreui-theme="dark"] .admin-route-view-documents .table-admin td strong,
+[data-coreui-theme="dark"] .admin-route-view-users .table-admin td a,
+[data-coreui-theme="dark"] .admin-route-view-documents .table-admin td a {
+    color: #f8fafc !important;
+    opacity: 1 !important;
+}
+
+.admin-route-view-users .table-admin td,
+.admin-route-view-documents .table-admin td {
+    font-weight: 500;
+}
+
+/* Keep ID column sharp and unaffected by inherited link colors */
+.admin-route-view-users .table-admin td:first-child,
+.admin-route-view-users .table-admin th:first-child,
+.admin-route-view-documents .table-admin td:first-child,
+.admin-route-view-documents .table-admin th:first-child {
+    white-space: nowrap !important;
+    font-weight: 700 !important;
+    min-width: 50px;
+    opacity: 1 !important;
+}
+
+body.emsp-ajax-loading::after {
+    content: '';
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 34px;
+    height: 34px;
+    border: 3px solid rgba(148, 163, 184, .35);
+    border-top-color: #006B3C;
+    border-radius: 50%;
+    animation: emsp-spin .8s linear infinite;
+    z-index: 2000;
+}
+
+@keyframes emsp-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   Mobile UX final pass (<= 767.98px)
+   ============================================================ */
+@media (max-width: 767.98px) {
+    html,
+    body {
+        overflow-x: hidden !important;
+    }
+
+    .header.header-sticky .container-fluid {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        min-height: 56px;
+    }
+
+    .topbar-back-btn .topbar-back-label {
+        display: none !important;
+    }
+
+    .topbar-icon-link {
+        min-width: 44px;
+        min-height: 44px;
+        width: 44px;
+        height: 44px;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        border-radius: .75rem;
+    }
+
+    .topbar-notif-badge {
+        top: 5px !important;
+        right: 5px !important;
+    }
+
+    #miniSidebar.emsp-slim-sidebar {
+        position: fixed !important;
+        z-index: 1065 !important;
+    }
+
+    #sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 23, .55);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease;
+        z-index: 1064;
+    }
+
+    body.sidebar-open #sidebar-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    body.sidebar-open {
+        overflow: hidden !important;
+        touch-action: none;
+    }
+
+    .table-mobile,
+    .table-admin,
+    .sb-table {
+        width: 100%;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+    }
+
+    .table-mobile thead,
+    .table-admin thead,
+    .sb-table thead {
+        display: none !important;
+    }
+
+    .table-mobile tbody tr,
+    .table-admin tbody tr,
+    .sb-table tbody tr {
+        display: block !important;
+        background: var(--cui-card-bg, #fff) !important;
+        border: 1px solid var(--cui-border-color, #e2e8f0) !important;
+        border-radius: .85rem;
+        padding: .4rem .75rem .75rem;
+        margin-bottom: .75rem;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, .06);
+    }
+
+    .table-mobile tbody td,
+    .table-admin tbody td,
+    .sb-table tbody td {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: .6rem;
+        width: 100%;
+        text-align: right !important;
+        padding: .55rem 0 !important;
+        border: 0 !important;
+        vertical-align: middle !important;
+    }
+
+    .table-mobile tbody td::before,
+    .table-admin tbody td::before,
+    .sb-table tbody td::before {
+        content: attr(data-label);
+        flex: 0 0 45%;
+        max-width: 45%;
+        color: #64748b;
+        font-weight: 600;
+        text-align: left;
+        margin-right: .5rem;
+    }
+
+    .table-mobile tbody td:last-child,
+    .table-admin tbody td:last-child,
+    .sb-table tbody td:last-child {
+        margin-top: .25rem;
+        padding-top: .65rem !important;
+        border-top: 1px solid #e2e8f0 !important;
+        background: #f8fafc;
+        border-radius: .5rem;
+        text-align: left !important;
+    }
+
+    .table-mobile tbody td:last-child::before,
+    .table-admin tbody td:last-child::before,
+    .sb-table tbody td:last-child::before {
+        display: none;
+    }
+
+    .table-mobile .btn,
+    .table-admin .btn,
+    .sb-table .btn {
+        min-height: 40px;
+    }
+
+    .modal-fullscreen-mobile .modal-dialog,
+    .modal.show .modal-dialog.modal-xl,
+    .modal.show .modal-dialog.modal-lg {
+        margin: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+    }
+
+    .modal-fullscreen-mobile .modal-content,
+    .modal.show .modal-dialog.modal-xl .modal-content,
+    .modal.show .modal-dialog.modal-lg .modal-content {
+        border-radius: 0 !important;
+        min-height: 100vh;
+        height: 100vh;
+    }
+
+    .modal-fullscreen-mobile .modal-header,
+    .modal-fullscreen-mobile .modal-footer,
+    .modal.show .modal-dialog.modal-xl .modal-header,
+    .modal.show .modal-dialog.modal-xl .modal-footer,
+    .modal.show .modal-dialog.modal-lg .modal-header,
+    .modal.show .modal-dialog.modal-lg .modal-footer {
+        position: sticky;
+        z-index: 2;
+        background: var(--cui-body-bg, #fff);
+    }
+
+    .modal-fullscreen-mobile .modal-header,
+    .modal.show .modal-dialog.modal-xl .modal-header,
+    .modal.show .modal-dialog.modal-lg .modal-header {
+        top: 0;
+    }
+
+    .modal-fullscreen-mobile .modal-footer,
+    .modal.show .modal-dialog.modal-xl .modal-footer,
+    .modal.show .modal-dialog.modal-lg .modal-footer {
+        bottom: 0;
+    }
+
+    .modal-fullscreen-mobile .modal-body,
+    .modal.show .modal-dialog.modal-xl .modal-body,
+    .modal.show .modal-dialog.modal-lg .modal-body {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .emsp-preview-modal-frame,
+    iframe[data-emsp-preview] {
+        min-height: 60vh !important;
+        touch-action: manipulation;
+    }
+
+    .stack-forms .form-control,
+    .stack-forms .form-select,
+    .stack-forms input,
+    .stack-forms select,
+    .stack-forms textarea {
+        font-size: 16px !important;
+    }
+
+    .stack-forms .mb-3,
+    .stack-forms .form-group {
+        margin-bottom: 1.5rem !important;
+    }
+
+    .stack-forms .btn,
+    .stack-forms button[type="submit"],
+    .stack-forms button[type="button"] {
+        width: 100%;
+    }
+
+    .stack-forms .btn + .btn {
+        margin-top: .6rem;
+    }
+
+    .text-truncate,
+    .emsp-col-email .text-truncate,
+    .emsp-doc-title {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .emsp-description,
+    .emsp-comment {
+        word-break: break-word;
+    }
+
+    .badge,
+    .status-badge {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: .25rem;
+    }
+
+    .btn:active,
+    .nav-link:active {
+        opacity: .82;
+        transform: scale(.98);
+    }
+}
+
+/* ============================================================
+   Mobile/PWA rescue layout (<= 991.98px)
+   Corrige l'ecrasement du contenu par marge sidebar residuelle
+   ============================================================ */
+@media (max-width: 991.98px) {
+    /* Sidebar mobile epuree : on retire le bloc logo/profil */
+    #miniSidebar .sidebar-header,
+    #miniSidebar .admin-user-info,
+    #miniSidebar .nav-title {
+        display: none !important;
+    }
+
+    #miniSidebar {
+        transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    html,
+    body {
+        overflow-x: hidden !important;
+        max-width: 100%;
+        touch-action: manipulation;
+        width: 100%;
+    }
+
+    body {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /* 1) Liberation de l'espace global */
+    #admin-wrapper,
+    #admin-content,
+    #main-content,
+    .wrapper,
+    main.wrapper,
+    .body {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    /* Neutralise les regles desktop plus specifiques */
+    #admin-wrapper.collapsed .wrapper,
+    #admin-wrapper:not(.collapsed) .wrapper,
+    #admin-wrapper .wrapper {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    #admin-wrapper {
+        --sidebar-width: 0px !important;
+    }
+
+    #main-content,
+    .body {
+        padding-right: 10px !important;
+        padding-left: 10px !important;
+    }
+
+    /* 2) Sidebar en drawer natif */
+    #miniSidebar,
+    #miniSidebar.emsp-slim-sidebar,
+    #admin-wrapper.collapsed #miniSidebar {
+        position: fixed !important;
+        top: 20px !important;
+        bottom: 100px !important;
+        left: 15px !important;
+        width: min(85vw, 280px) !important;
+        min-width: min(85vw, 280px) !important;
+        max-width: min(85vw, 280px) !important;
+        height: auto !important;
+        max-height: calc(100vh - 120px) !important;
+        border-radius: 28px !important;
+        border: 1px solid rgba(255, 255, 255, .15) !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .5) !important;
+        background: rgba(15, 23, 42, .95) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px) !important;
+        transform: translateX(-120%) translateY(0) !important;
+        transition: transform .4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        z-index: 2000 !important;
+        border-right: 0 !important;
+        padding-top: 15px;
+    }
+
+    body.sidebar-open #miniSidebar,
+    body.sidebar-open #miniSidebar.emsp-slim-sidebar {
+        transform: translateX(0) translateY(0) !important;
+        box-shadow: 8px 0 24px rgba(0, 0, 0, .4);
+    }
+
+    #miniSidebar .nav-item {
+        margin: 5px 15px !important;
+    }
+
+    #miniSidebar .nav-link {
+        border-radius: 15px !important;
+        padding: 12px 20px !important;
+        font-size: 1rem !important;
+    }
+
+    #sidebar-overlay {
+        position: fixed !important;
+        inset: 0 !important;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        background: rgba(0, 0, 0, .6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        transition: opacity .2s ease;
+        z-index: 1068 !important;
+    }
+
+    body.sidebar-open #sidebar-overlay,
+    body.sidebar-open #sidebar-overlay.show {
+        opacity: 1 !important;
+        visibility: visible;
+        pointer-events: auto !important;
+    }
+
+    body.sidebar-open {
+        overflow: hidden !important;
+    }
+
+    /* FAB menu mobile (bas-droite) */
+    .header-toggler.d-lg-none,
+    [data-sidebar-toggle="mobile"] {
+        position: fixed !important;
+        bottom: 25px;
+        right: 20px;
+        left: auto !important;
+        top: auto !important;
+        width: 64px !important;
+        height: 64px !important;
+        min-width: 64px !important;
+        min-height: 64px !important;
+        border-radius: 50% !important;
+        z-index: 2100 !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        background: #006B3C !important;
+        color: #fff !important;
+        border: 3px solid #F5A800 !important;
+        box-shadow: 0 8px 25px rgba(0, 107, 60, .4);
+        padding: 0 !important;
+        transition: all .3s ease;
+    }
+
+    .header-toggler.d-lg-none:active,
+    [data-sidebar-toggle="mobile"]:active {
+        transform: scale(.85);
+        background: #004D2A !important;
+    }
+
+    .header-toggler.d-lg-none i {
+        color: #fff !important;
+        font-size: 1.8rem !important;
+    }
+
+    body.sidebar-open .header-toggler.d-lg-none {
+        background: #dc2626 !important;
+        transform: rotate(90deg) scale(1.1);
+        border-color: #fff !important;
+    }
+
+    #miniSidebar .btn-close {
+        display: none !important;
+    }
+
+    /* 3) KPI/cartes/grilles en colonne */
+    .row > [class*="col-"],
+    .dashboard-kpi .col,
+    .dashboard-kpi .card,
+    .kpi-card,
+    .chart-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .row {
+        --cui-gutter-x: .75rem;
+        --bs-gutter-x: .75rem;
+    }
+
+    .card,
+    .sb-card,
+    .kpi-card,
+    .chart-card,
+    .table-card {
+        padding: .75rem !important;
+    }
+
+    .card .card-body,
+    .sb-card .card-body {
+        padding: .75rem !important;
+    }
+
+    /* 4) Topbar/tap-target/PWA */
+    header.header-sticky,
+    .header.header-sticky {
+        min-height: 56px !important;
+        max-height: 56px !important;
+    }
+
+    .header.header-sticky .container-fluid {
+        min-height: 56px !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    a.nav-link,
+    .btn,
+    button,
+    .sidebar .nav-link,
+    .table .btn,
+    .table-admin .btn {
+        min-width: 44px;
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+
+    .wrapper,
+    .body,
+    #main-content {
+        margin-left: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    }
+
+    /* 5) Tableaux lisibles mobile */
+    .table-responsive,
+    .table-responsive-auto {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-mobile tbody tr,
+    .table-admin tbody tr,
+    .sb-table tbody tr {
+        margin-bottom: .85rem;
+    }
+
+    .table-mobile tbody td,
+    .table-admin tbody td,
+    .sb-table tbody td {
+        font-size: .93rem;
+    }
+
+    /* 6) Form controls anti-zoom */
+    input,
+    select,
+    textarea,
+    .form-control,
+    .form-select {
+        font-size: 16px !important;
+        touch-action: manipulation;
+    }
+
+    [data-coreui-theme="dark"] #sidebar-overlay {
+        background: rgba(2, 6, 23, .62);
+    }
+
+    [data-coreui-theme="dark"] .table-mobile tbody tr,
+    [data-coreui-theme="dark"] .table-admin tbody tr,
+    [data-coreui-theme="dark"] .sb-table tbody tr {
+        background: #1f2937 !important;
+        border-color: #334155 !important;
+    }
+}
+
+/* ============================================================
+   UI Refresh PWA - elegant and lightweight
+   ============================================================ */
+:root {
+    --emsp-app-bg: #f4f7fa;
+    --emsp-app-bg-soft: #f8fafc;
+    --emsp-surface: #ffffff;
+    --emsp-text-main: #334155;
+    --emsp-sidebar-navy: #1e293b;
+    --emsp-card-radius: 16px;
+    --emsp-soft-shadow: 0 4px 6px -1px rgba(0, 0, 0, .05), 0 2px 4px -1px rgba(0, 0, 0, .03);
+}
+
+body.bg-body,
+.admin-wrapper,
+.wrapper,
+#main-content {
+    background-color: var(--emsp-app-bg) !important;
+    color: var(--emsp-text-main);
+}
+
+@media (min-width: 992px) {
+    .wrapper {
+        padding: 1.25rem !important;
+    }
+
+    #main-content {
+        padding: 1rem 1.25rem 1.25rem !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .admin-route-view-users .emsp-users-table-wrap {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .admin-route-view-users .emsp-users-table {
+        table-layout: auto !important;
+        min-width: 1180px;
+    }
+
+    .admin-route-view-users .emsp-users-table th,
+    .admin-route-view-users .emsp-users-table td {
+        white-space: nowrap;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
+
+    .admin-route-view-users .emsp-users-table .emsp-col-name {
+        min-width: 220px;
+        white-space: normal;
+    }
+
+    .admin-route-view-users .emsp-users-table .emsp-col-email {
+        min-width: 280px;
+    }
+
+    .admin-route-view-users .emsp-users-table .emsp-col-filiere {
+        min-width: 240px;
+    }
+
+    .admin-route-view-users .emsp-users-table .emsp-col-status {
+        min-width: 130px;
+    }
+
+    .admin-route-view-users .emsp-users-table .emsp-col-date {
+        min-width: 120px;
+    }
+
+    .admin-route-view-users .emsp-users-table .emsp-col-actions {
+        min-width: 120px;
+    }
+
+    .admin-route-view-users .emsp-users-table .emsp-col-name,
+    .admin-route-view-users .emsp-users-table .emsp-col-email .text-truncate,
+    .admin-route-view-users .emsp-users-table .emsp-col-filiere .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@media (min-width: 992px) {
+    .admin-route-view-documents .emsp-docs-table-wrap,
+    .admin-route-pending-users .emsp-pending-users-table-wrap,
+    .admin-route-media-categories .emsp-media-cats-table-wrap,
+    .admin-route-comments-moderation .emsp-comments-table-wrap {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .admin-route-view-documents .emsp-docs-table {
+        table-layout: auto !important;
+        min-width: 1120px;
+    }
+
+    .admin-route-pending-users .emsp-pending-users-table {
+        table-layout: auto !important;
+        min-width: 1080px;
+    }
+
+    .admin-route-media-categories .emsp-media-cats-table {
+        table-layout: auto !important;
+        min-width: 1180px;
+    }
+
+    .admin-route-comments-moderation .emsp-comments-table {
+        table-layout: auto !important;
+        min-width: 1160px;
+    }
+
+    .admin-route-view-documents .emsp-docs-table th,
+    .admin-route-view-documents .emsp-docs-table td,
+    .admin-route-pending-users .emsp-pending-users-table th,
+    .admin-route-pending-users .emsp-pending-users-table td,
+    .admin-route-media-categories .emsp-media-cats-table th,
+    .admin-route-media-categories .emsp-media-cats-table td,
+    .admin-route-comments-moderation .emsp-comments-table th,
+    .admin-route-comments-moderation .emsp-comments-table td {
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        vertical-align: middle !important;
+    }
+
+    .admin-route-view-documents .emsp-docs-table .emsp-col-title {
+        min-width: 290px;
+    }
+
+    .admin-route-view-documents .emsp-docs-table .emsp-col-author {
+        min-width: 170px;
+        white-space: normal;
+    }
+
+    .admin-route-view-documents .emsp-docs-table .emsp-col-status {
+        min-width: 120px;
+    }
+
+    .admin-route-view-documents .emsp-docs-table .emsp-col-public {
+        min-width: 80px;
+    }
+
+    .admin-route-view-documents .emsp-docs-table .emsp-col-stats {
+        min-width: 180px;
+    }
+
+    .admin-route-view-documents .emsp-docs-table .emsp-col-date {
+        min-width: 110px;
+    }
+
+    .admin-route-view-documents .emsp-docs-table .emsp-col-actions {
+        min-width: 180px;
+    }
+
+    .admin-route-view-documents .emsp-docs-table .emsp-doc-title {
+        max-width: 240px !important;
+    }
+
+    .admin-route-pending-users .emsp-pending-users-table .emsp-col-name {
+        min-width: 180px;
+        white-space: normal;
+    }
+
+    .admin-route-pending-users .emsp-pending-users-table .emsp-col-email {
+        min-width: 260px;
+        white-space: nowrap;
+    }
+
+    .admin-route-pending-users .emsp-pending-users-table .emsp-col-program {
+        min-width: 250px;
+        white-space: normal;
+    }
+
+    .admin-route-pending-users .emsp-pending-users-table .emsp-col-method,
+    .admin-route-pending-users .emsp-pending-users-table .emsp-col-date,
+    .admin-route-pending-users .emsp-pending-users-table .emsp-col-verified {
+        min-width: 140px;
+    }
+
+    .admin-route-pending-users .emsp-pending-users-table .emsp-col-actions {
+        min-width: 260px;
+    }
+
+    .admin-route-media-categories .emsp-media-cats-table .emsp-col-name {
+        min-width: 220px;
+        white-space: normal;
+    }
+
+    .admin-route-media-categories .emsp-media-cats-table .emsp-col-description {
+        min-width: 320px;
+        white-space: normal;
+    }
+
+    .admin-route-media-categories .emsp-media-cats-table .emsp-col-date {
+        min-width: 170px;
+        white-space: nowrap;
+    }
+
+    .admin-route-media-categories .emsp-media-cats-table .emsp-col-actions {
+        min-width: 430px;
+    }
+
+    .admin-route-media-categories .emsp-media-cats-table .emsp-media-cats-edit-form {
+        display: inline-grid !important;
+        grid-template-columns: minmax(160px, 200px) minmax(180px, 1fr) auto;
+        gap: .5rem;
+        align-items: start;
+    }
+
+    .admin-route-media-categories .emsp-media-cats-table .emsp-col-actions .form-control {
+        min-width: 0;
+    }
+
+    .admin-route-comments-moderation .emsp-comments-table .emsp-col-source {
+        min-width: 190px;
+    }
+
+    .admin-route-comments-moderation .emsp-comments-table .emsp-col-author {
+        min-width: 190px;
+        white-space: normal;
+    }
+
+    .admin-route-comments-moderation .emsp-comments-table .emsp-col-comment {
+        min-width: 320px;
+        white-space: normal;
+    }
+
+    .admin-route-comments-moderation .emsp-comments-table .emsp-col-target {
+        min-width: 170px;
+    }
+
+    .admin-route-comments-moderation .emsp-comments-table .emsp-col-status {
+        min-width: 110px;
+        white-space: normal;
+    }
+
+    .admin-route-comments-moderation .emsp-comments-table .emsp-col-date {
+        min-width: 125px;
+        white-space: nowrap;
+    }
+
+    .admin-route-comments-moderation .emsp-comments-table .emsp-col-actions {
+        min-width: 120px;
+    }
+
+    .admin-route-view-users .emsp-users-table tbody tr,
+    .admin-route-view-documents .emsp-docs-table tbody tr,
+    .admin-route-pending-users .emsp-pending-users-table tbody tr,
+    .admin-route-media-categories .emsp-media-cats-table tbody tr,
+    .admin-route-comments-moderation .emsp-comments-table tbody tr {
+        transition: background-color .18s ease, box-shadow .18s ease;
+    }
+
+    .admin-route-view-users .emsp-users-table tbody tr:hover,
+    .admin-route-view-documents .emsp-docs-table tbody tr:hover,
+    .admin-route-pending-users .emsp-pending-users-table tbody tr:hover,
+    .admin-route-media-categories .emsp-media-cats-table tbody tr:hover,
+    .admin-route-comments-moderation .emsp-comments-table tbody tr:hover {
+        background: rgba(245, 168, 0, 0.08) !important;
+        box-shadow: inset 3px 0 0 rgba(245, 168, 0, 0.9);
+    }
+
+    [data-coreui-theme="dark"] .admin-route-view-users .emsp-users-table tbody tr:hover,
+    [data-coreui-theme="dark"] .admin-route-view-documents .emsp-docs-table tbody tr:hover,
+    [data-coreui-theme="dark"] .admin-route-pending-users .emsp-pending-users-table tbody tr:hover,
+    [data-coreui-theme="dark"] .admin-route-media-categories .emsp-media-cats-table tbody tr:hover,
+    [data-coreui-theme="dark"] .admin-route-comments-moderation .emsp-comments-table tbody tr:hover {
+        background: rgba(245, 168, 0, 0.11) !important;
+        box-shadow: inset 3px 0 0 rgba(245, 168, 0, 0.95);
+    }
+}
+
+.card,
+.sb-card {
+    border: 0 !important;
+    border-radius: var(--emsp-card-radius) !important;
+    box-shadow: var(--emsp-soft-shadow) !important;
+    background: var(--emsp-surface) !important;
+}
+
+@media (min-width: 992px) {
+    .card .card-body,
+    .sb-card .card-body {
+        padding: 1.25rem !important;
+    }
+}
+
+#miniSidebar,
+#miniSidebar.emsp-slim-sidebar {
+    background: rgba(30, 41, 59, .94) !important;
+    border-right: 0 !important;
+    box-shadow: 6px 0 16px rgba(2, 8, 23, .18);
+}
+
+#miniSidebar .sidebar-header,
+#miniSidebar .sidebar-brand {
+    padding: .95rem !important;
+}
+
+#miniSidebar .nav-link {
+    position: relative;
+    margin: 4px 10px;
+    border-radius: 10px;
+    transition: background-color .22s ease, color .22s ease, transform .18s ease;
+}
+
+#miniSidebar .nav-link::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 20%;
+    height: 60%;
+    width: 3px;
+    border-radius: 99px;
+    background: transparent;
+    transition: background-color .22s ease;
+}
+
+#miniSidebar .nav-link.active {
+    background: rgba(255, 255, 255, .05) !important;
+    color: #F5A800 !important;
+}
+
+#miniSidebar .nav-link.active .nav-icon,
+#miniSidebar .nav-link.active i {
+    color: #F5A800 !important;
+}
+
+#miniSidebar .nav-link.active::before {
+    background: #F5A800;
+}
+
+#miniSidebar .emsp-install-app-btn {
+    border: 1px solid rgba(245, 168, 0, .45) !important;
+    background: rgba(245, 168, 0, .12) !important;
+    color: #f8fafc !important;
+}
+
+#miniSidebar .emsp-install-app-btn:hover {
+    background: rgba(245, 168, 0, .2) !important;
+}
+
+#miniSidebar .nav-link:hover {
+    background: rgba(255, 255, 255, .06) !important;
+    transform: translateX(1px);
+}
+
+.avatar,
+.admin-profile-avatar,
+.admin-avatar-circle {
+    border-radius: 12px !important;
+}
+
+.admin-avatar-circle,
+.avatar-initiales,
+.avatar-initials {
+    background: #f1f5f9 !important;
+    color: #64748b !important;
+    font-weight: 600;
+}
+
+.table td,
+.table th,
+.table-admin td,
+.table-admin th {
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.header-sticky,
+.navbar-glass.header-sticky {
+    background: rgba(255, 255, 255, .82) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(226, 232, 240, .55) !important;
+}
+
+[data-coreui-theme="dark"] body.bg-body,
+[data-coreui-theme="dark"] .admin-wrapper,
+[data-coreui-theme="dark"] .wrapper,
+[data-coreui-theme="dark"] #main-content {
+    background-color: #111827 !important;
+    color: #e2e8f0 !important;
+}
+
+[data-coreui-theme="dark"] .card,
+[data-coreui-theme="dark"] .sb-card {
+    background: #1f2937 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .28) !important;
+}
+
+[data-coreui-theme="dark"] .table td,
+[data-coreui-theme="dark"] .table th,
+[data-coreui-theme="dark"] .table-admin td,
+[data-coreui-theme="dark"] .table-admin th {
+    border-bottom-color: #334155 !important;
+}
+
+[data-coreui-theme="dark"] .header-sticky,
+[data-coreui-theme="dark"] .navbar-glass.header-sticky {
+    background: rgba(15, 23, 42, .78) !important;
+    border-bottom-color: rgba(71, 85, 105, .45) !important;
+}
+
+@media (max-width: 767.98px) {
+    .kpi-card .fs-6.fw-normal {
+        display: none !important;
+    }
+
+    .kpi-card .dropdown {
+        display: none !important;
+    }
+
+    .card-header .btn.btn-link {
+        padding-inline: .15rem !important;
+        font-size: .82rem;
+    }
+
+    .emsp-doc-admin-mobile-meta span:nth-child(2),
+    .emsp-doc-admin-mobile-meta span:nth-child(3) {
+        display: none;
+    }
+
+    /* Tables -> cards (PWA mobile strict mode) */
+    .table-admin thead {
+        display: none !important;
+    }
+
+    .table-admin tbody tr {
+        display: block !important;
+        margin-bottom: 15px !important;
+        background: #fff !important;
+        border-radius: 20px !important;
+        padding: 15px !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, .05) !important;
+        border: 1px solid #eee !important;
+    }
+
+    .table-admin td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 8px 0 !important;
+        border: none !important;
+        text-align: right !important;
+    }
+
+    .table-admin td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        text-align: left;
+        color: #64748b;
+    }
+
+    #dropZone {
+        min-height: 150px !important;
+        border: 3px dashed #006B3C !important;
+        background: #f0fdf4 !important;
+    }
+}
+
+/* --- EMSP MOBILE TRANSFORMATION (PWA STYLE) --- */
+@media (max-width: 991.98px) {
+    #miniSidebar .sidebar-header,
+    #miniSidebar .admin-user-info,
+    #miniSidebar .nav-title:first-of-type {
+        display: none !important;
+    }
+
+    #miniSidebar,
+    #miniSidebar.emsp-slim-sidebar,
+    #admin-wrapper.collapsed #miniSidebar {
+        top: 20px !important;
+        right: auto !important;
+        bottom: 100px !important;
+        left: -320px !important;
+        margin-left: 0 !important;
+        width: 280px !important;
+        height: auto !important;
+        max-height: calc(100vh - 120px) !important;
+        border-radius: 28px !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        background: rgba(15, 23, 42, 0.95) !important;
+        -webkit-backdrop-filter: blur(15px) !important;
+        backdrop-filter: blur(15px) !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+        transform: none !important;
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        padding-top: 15px !important;
+        overflow-y: auto !important;
+        z-index: 1999 !important;
+    }
+
+    body.sidebar-open #miniSidebar,
+    body.sidebar-open #miniSidebar.emsp-slim-sidebar {
+        left: 15px !important;
+    }
+
+    #miniSidebar .sidebar-nav {
+        padding: 14px 0 18px !important;
+    }
+
+    #miniSidebar .nav-title {
+        display: block !important;
+        margin: 1rem 1.05rem .55rem !important;
+        padding: 0 .2rem !important;
+        font-size: .66rem !important;
+        font-weight: 800 !important;
+        letter-spacing: .12em !important;
+        color: rgba(255, 255, 255, 0.46) !important;
+    }
+
+    #miniSidebar .nav-item {
+        margin: .28rem .85rem !important;
+    }
+
+    #miniSidebar .nav-link {
+        min-height: 52px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: .9rem !important;
+        padding: .9rem 1rem !important;
+        border-radius: 18px !important;
+        font-size: .96rem !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+        background: transparent !important;
+        color: rgba(255, 255, 255, 0.92) !important;
+    }
+
+    #miniSidebar .nav-link .nav-icon,
+    #miniSidebar .nav-link i {
+        width: 1.25rem !important;
+        min-width: 1.25rem !important;
+        font-size: 1rem !important;
+        text-align: center !important;
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    #miniSidebar .nav-link .nav-label {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        white-space: normal !important;
+    }
+
+    #miniSidebar .nav-link .badge {
+        margin-left: auto !important;
+        border-radius: 999px !important;
+        font-size: .68rem !important;
+        padding: .28rem .46rem !important;
+        box-shadow: none !important;
+    }
+
+    #miniSidebar .nav-link:hover,
+    #miniSidebar .nav-link:focus-visible {
+        background: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    #miniSidebar .nav-link.active {
+        background: linear-gradient(90deg, rgba(245, 168, 0, 0.18) 0%, rgba(245, 168, 0, 0.08) 100%) !important;
+        box-shadow: inset 0 0 0 1px rgba(245, 168, 0, 0.22) !important;
+        color: #ffffff !important;
+    }
+
+    #miniSidebar .nav-link.active .nav-icon,
+    #miniSidebar .nav-link.active i {
+        color: #F5A800 !important;
+    }
+
+    #miniSidebar .emsp-install-nav-item {
+        margin-top: .8rem !important;
+    }
+
+    #miniSidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #miniSidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+    }
+
+    .emsp-mobile-sidebar-fab {
+        position: fixed !important;
+        right: auto !important;
+        bottom: 25px !important;
+        left: 20px !important;
+        top: auto !important;
+        width: 64px !important;
+        height: 64px !important;
+        min-width: 64px !important;
+        min-height: 64px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 999px !important;
+        border: 3px solid #F5A800 !important;
+        background: var(--emsp-green, #006B3C) !important;
+        color: #fff !important;
+        box-shadow: 0 10px 30px rgba(0, 107, 60, 0.4) !important;
+        z-index: 2000 !important;
+        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease !important;
+    }
+
+    .emsp-mobile-sidebar-fab i {
+        pointer-events: none;
+        line-height: 1;
+    }
+
+    .header-toggler.d-lg-none {
+        display: none !important;
+    }
+
+    .header-toggler.d-lg-none[data-sidebar-toggle="mobile"],
+    .emsp-mobile-sidebar-fab {
+        left: 20px !important;
+        right: auto !important;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    .emsp-mobile-sidebar-fab:active {
+        transform: scale(0.85) !important;
+        background: #004D2A !important;
+    }
+
+    body.sidebar-open .emsp-mobile-sidebar-fab {
+        background: #dc2626 !important;
+        border-color: #ffffff !important;
+        box-shadow: 0 10px 30px rgba(220, 38, 38, 0.35) !important;
+    }
+
+    #miniSidebar .btn-close {
+        display: none !important;
+    }
+
+    #sidebar-overlay {
+        background: rgba(0, 0, 0, 0.6) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+        backdrop-filter: blur(4px) !important;
+    }
+}
+
+@media (min-width: 992px) {
+    #admin-wrapper {
+        --sidebar-width: 248px !important;
+        --sidebar-collapsed-width: 86px !important;
+    }
+
+    #miniSidebar .sidebar-header,
+    #miniSidebar .admin-user-info {
+        display: none !important;
+    }
+
+    #miniSidebar,
+    #miniSidebar.emsp-slim-sidebar {
+        top: 18px !important;
+        left: 18px !important;
+        bottom: 18px !important;
+        width: var(--sidebar-width) !important;
+        min-width: var(--sidebar-width) !important;
+        max-width: var(--sidebar-width) !important;
+        height: auto !important;
+        border-radius: 30px !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background: rgba(15, 23, 42, 0.96) !important;
+        box-shadow: 0 28px 60px rgba(2, 6, 23, 0.26) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+    }
+
+    #miniSidebar .sidebar-nav {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    #miniSidebar .nav-title {
+        margin-top: .9rem !important;
+        margin-bottom: .55rem !important;
+        padding-inline: 1.15rem !important;
+        font-size: .68rem !important;
+        opacity: .7 !important;
+    }
+
+    #miniSidebar .nav-item {
+        margin: .2rem .75rem !important;
+    }
+
+    #miniSidebar .nav-link {
+        border-radius: 16px !important;
+        padding: .82rem 1rem !important;
+    }
+
+    #miniSidebar .nav-link.active {
+        border-left: none !important;
+        box-shadow: inset 0 0 0 1px rgba(245, 168, 0, 0.22) !important;
+    }
+
+    #admin-wrapper.collapsed #miniSidebar,
+    #admin-wrapper.collapsed #miniSidebar.emsp-slim-sidebar {
+        width: var(--sidebar-collapsed-width) !important;
+        min-width: var(--sidebar-collapsed-width) !important;
+        max-width: var(--sidebar-collapsed-width) !important;
+    }
+
+    #admin-wrapper.collapsed #miniSidebar .nav-link {
+        justify-content: center !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    #admin-wrapper.collapsed #miniSidebar:hover {
+        width: var(--sidebar-width) !important;
+        min-width: var(--sidebar-width) !important;
+        max-width: var(--sidebar-width) !important;
+    }
+
+    #admin-wrapper.collapsed .wrapper {
+        margin-left: calc(var(--sidebar-collapsed-width) + 36px) !important;
+    }
+
+    .wrapper {
+        margin-left: calc(var(--sidebar-width) + 36px) !important;
+    }
+}

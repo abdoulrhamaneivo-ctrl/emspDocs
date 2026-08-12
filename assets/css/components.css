@@ -1,0 +1,718 @@
+/* ==========================================================================
+   EMSP DOCS — COMPOSANTS D'ÉLITE & UI INTERACTIVE
+   Règle : un bloc de contenu n'est PAS une carte par défaut.
+   Utiliser .emsp-card uniquement pour une séparation forte ou une interaction claire.
+   Préférer : .emsp-form-section, .emsp-editorial-list, .emsp-timeline, séparateurs.
+   ========================================================================== */
+
+/* Cartes — usage sélectif uniquement (interaction ou séparation forte) */
+.emsp-card {
+  background: var(--emsp-bg-surface);
+  border: 1px solid var(--emsp-border-color);
+  border-radius: var(--emsp-radius-sm);
+  padding: 1.5rem;
+  position: relative;
+}
+
+.emsp-card-interactive {
+  cursor: pointer;
+  transition: border-color var(--emsp-transition-fast), background-color var(--emsp-transition-fast);
+}
+
+.emsp-card-interactive:hover {
+  border-color: var(--emsp-border-hover);
+  background: var(--emsp-bg-main);
+}
+
+/* Sections éditoriales (formulaires, pages sans carte) */
+.emsp-form-section {
+  padding: 2.5rem 0;
+  border-bottom: 1px solid var(--emsp-border-color);
+}
+
+.emsp-form-section:first-of-type {
+  padding-top: 0;
+}
+
+.emsp-form-section:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.emsp-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--emsp-border-color);
+}
+
+.emsp-section-number {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--emsp-primary);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.emsp-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--emsp-text-main);
+  margin: 0;
+}
+
+/* Navigation institutionnelle — calme, aérée */
+.emsp-header {
+  background: var(--emsp-bg-surface);
+  border-bottom: 1px solid var(--emsp-border-color);
+  padding: 1.5rem 0;
+}
+
+.emsp-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+.emsp-brand {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.emsp-brand-wordmark {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--emsp-text-main);
+  white-space: nowrap;
+}
+
+.emsp-brand-wordmark strong {
+  font-weight: 800;
+  color: var(--emsp-primary);
+}
+
+.emsp-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.emsp-nav-link {
+  font-size: 0.925rem;
+  font-weight: 500;
+  color: var(--emsp-text-muted);
+  text-decoration: none;
+  transition: color var(--emsp-transition-fast);
+}
+
+.emsp-nav-link:hover {
+  color: var(--emsp-text-main);
+}
+
+.emsp-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  flex-shrink: 0;
+}
+
+.emsp-nav-link-muted {
+  font-size: 0.925rem;
+  font-weight: 500;
+  color: var(--emsp-text-muted);
+  text-decoration: none;
+}
+
+.emsp-nav-link-muted:hover {
+  color: var(--emsp-text-main);
+}
+
+.emsp-nav-link-accent {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--emsp-primary);
+  text-decoration: none;
+}
+
+.emsp-nav-link-accent:hover {
+  color: var(--emsp-primary-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.emsp-nav-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--emsp-text-muted);
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+
+.emsp-nav-icon-link:hover {
+  color: var(--emsp-text-main);
+}
+
+.emsp-nav-notif-dot {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.25rem;
+  border-radius: var(--emsp-radius-full);
+  background: var(--emsp-danger);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  line-height: 1rem;
+  text-align: center;
+}
+
+.emsp-nav-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.emsp-nav-avatar-initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--emsp-radius-full);
+  background: var(--emsp-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.emsp-nav-dropdown {
+  border: 1px solid var(--emsp-border-color);
+  border-radius: var(--emsp-radius-sm);
+  box-shadow: var(--emsp-shadow-sm);
+  margin-top: 0.5rem;
+  padding: 0.35rem 0;
+}
+
+@media (max-width: 991.98px) {
+  .emsp-header-inner {
+    gap: 1rem;
+  }
+
+  .emsp-nav-links {
+    display: none;
+  }
+
+  .emsp-nav-actions {
+    gap: 1rem;
+  }
+
+  .emsp-nav-link-accent {
+    font-size: 0.85rem;
+  }
+}
+
+/* Zone de dépôt de fichier */
+.emsp-upload-zone {
+  border: 1px dashed var(--emsp-border-hover);
+  border-radius: var(--emsp-radius-sm);
+  padding: 3rem 2rem;
+  text-align: center;
+  background: var(--emsp-bg-main);
+  cursor: pointer;
+  transition: border-color var(--emsp-transition-fast), background-color var(--emsp-transition-fast);
+}
+
+.emsp-upload-zone:hover,
+.emsp-upload-zone:focus-visible {
+  border-color: var(--emsp-primary);
+  background: var(--emsp-primary-alpha);
+  outline: none;
+}
+
+/* Liste éditoriale (FAQ, concours, guides) */
+.emsp-editorial-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.emsp-editorial-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--emsp-border-color);
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--emsp-transition-fast);
+}
+
+.emsp-editorial-item:hover {
+  color: var(--emsp-primary);
+}
+
+.emsp-editorial-item:last-child {
+  border-bottom: none;
+}
+
+.emsp-editorial-item-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+  color: var(--emsp-text-main);
+}
+
+.emsp-editorial-item-meta {
+  font-size: 0.85rem;
+  color: var(--emsp-text-muted);
+  margin: 0;
+}
+
+.emsp-editorial-item-arrow {
+  flex-shrink: 0;
+  color: var(--emsp-text-light);
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+  transition: transform var(--emsp-transition-fast), color var(--emsp-transition-fast);
+}
+
+.emsp-editorial-item:hover .emsp-editorial-item-arrow {
+  color: var(--emsp-primary);
+  transform: translateX(3px);
+}
+
+.emsp-results-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--emsp-text-muted);
+}
+
+/* Timeline éditoriale (historique, activité) */
+.emsp-timeline {
+  position: relative;
+  padding-left: 1.75rem;
+  border-left: 1px solid var(--emsp-border-color);
+}
+
+.emsp-timeline-item {
+  position: relative;
+  padding-bottom: 2rem;
+}
+
+.emsp-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.emsp-timeline-dot {
+  position: absolute;
+  left: calc(-1.75rem - 5px);
+  top: 0.15rem;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--emsp-radius-full);
+  background: var(--emsp-primary);
+  border: 2px solid var(--emsp-bg-main);
+}
+
+.emsp-timeline-dot--download {
+  background: var(--emsp-success);
+}
+
+.emsp-timeline-type {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--emsp-text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.emsp-timeline-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+  line-height: 1.35;
+}
+
+.emsp-timeline-title a {
+  color: var(--emsp-text-main);
+  text-decoration: none;
+}
+
+.emsp-timeline-title a:hover {
+  color: var(--emsp-primary);
+}
+
+.emsp-timeline-meta {
+  font-size: 0.85rem;
+  color: var(--emsp-text-muted);
+  margin: 0;
+}
+
+.emsp-timeline-date {
+  font-size: 0.8rem;
+  color: var(--emsp-text-light);
+}
+
+/* Connexion / auth — formulaire sans carte */
+.emsp-auth-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .emsp-auth-layout {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+.emsp-auth-editorial {
+  padding: 2rem 0;
+}
+
+@media (min-width: 992px) {
+  .emsp-auth-editorial {
+    padding: 4rem 2rem 4rem 0;
+  }
+}
+
+.emsp-auth-editorial-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  margin: 0 0 1.5rem;
+  max-width: 16rem;
+}
+
+.emsp-auth-editorial-lead {
+  font-size: 1.1rem;
+  color: var(--emsp-text-muted);
+  line-height: 1.7;
+  margin: 0;
+  max-width: 22rem;
+}
+
+.emsp-auth-form {
+  padding: 0;
+}
+
+@media (min-width: 992px) {
+  .emsp-auth-layout .emsp-auth-form {
+    padding-left: 2.5rem;
+    border-left: 1px solid var(--emsp-border-color);
+  }
+}
+
+.emsp-auth-form-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+}
+
+.emsp-auth-form-sub {
+  font-size: 0.9rem;
+  color: var(--emsp-text-muted);
+  margin: 0 0 1.75rem;
+}
+
+/* Page document — expérience premium éditoriale */
+.emsp-doc-page {
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.emsp-doc-layout {
+  margin-top: .5rem;
+}
+
+.emsp-doc-type {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--emsp-primary);
+  margin-bottom: 1rem;
+}
+
+.emsp-doc-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(1.75rem, 3.5vw, 2.35rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0 0 1rem;
+}
+
+.emsp-doc-byline {
+  font-size: 0.9rem;
+  color: var(--emsp-text-muted);
+  margin: 0 0 0.5rem;
+}
+
+.emsp-doc-academic {
+  font-size: 0.85rem;
+  color: var(--emsp-text-light);
+  margin: 0;
+}
+
+.emsp-doc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.emsp-doc-description {
+  font-size: 1.1rem;
+  color: var(--emsp-text-muted);
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--emsp-border-color);
+}
+
+.emsp-doc-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--emsp-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.emsp-doc-share {
+  margin-bottom: 3rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--emsp-border-color);
+}
+
+.emsp-doc-comments-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.emsp-doc-comment {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--emsp-border-color);
+}
+
+.emsp-doc-comment:last-child {
+  border-bottom: none;
+}
+
+.emsp-doc-comment-author {
+  font-weight: 600;
+  color: var(--emsp-text-main);
+}
+
+.emsp-doc-comment-date {
+  font-size: 0.8rem;
+  color: var(--emsp-text-light);
+}
+
+.emsp-doc-comment-reply {
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--emsp-border-color);
+  margin-top: 0.75rem;
+}
+
+.emsp-empty-state {
+  padding: 3rem 0;
+  text-align: center;
+  color: var(--emsp-text-muted);
+}
+
+.emsp-empty-state-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--emsp-text-main);
+  margin-bottom: 0.5rem;
+}
+
+/* Document Card Specifics */
+.emsp-doc-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.emsp-doc-card .emsp-doc-thumb {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: var(--emsp-radius-sm);
+  background: var(--emsp-bg-main);
+  margin-bottom: 1rem;
+}
+
+.emsp-doc-card .emsp-doc-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--emsp-text-muted);
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--emsp-border-color);
+}
+
+/* Boutons d'élite */
+.emsp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  font-size: 0.925rem;
+  font-weight: 600;
+  border-radius: var(--emsp-radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--emsp-transition-fast);
+}
+
+.emsp-btn-primary {
+  background: var(--emsp-primary);
+  color: #FFFFFF;
+}
+
+.emsp-btn-primary:hover {
+  background: var(--emsp-primary-hover);
+  color: #FFFFFF;
+}
+
+.emsp-btn-outline {
+  background: transparent;
+  border-color: var(--emsp-border-color);
+  color: var(--emsp-text-main);
+}
+
+.emsp-btn-outline:hover {
+  border-color: var(--emsp-primary);
+  color: var(--emsp-primary);
+  background: var(--emsp-primary-alpha);
+}
+
+.emsp-btn-gold {
+  background: var(--emsp-gold);
+  color: #FFFFFF;
+}
+
+.emsp-btn-gold:hover {
+  background: #B45309;
+  color: #FFFFFF;
+  box-shadow: 0 0 16px var(--emsp-gold-alpha);
+}
+
+/* Formulaires & Input Fields */
+.emsp-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.emsp-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--emsp-text-main);
+  margin-bottom: 0.4rem;
+}
+
+.emsp-input,
+.emsp-select,
+.emsp-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--emsp-text-main);
+  background: var(--emsp-bg-surface);
+  border: 1px solid var(--emsp-border-color);
+  border-radius: var(--emsp-radius-sm);
+  transition: border-color var(--emsp-transition-fast), box-shadow var(--emsp-transition-fast);
+  box-sizing: border-box;
+}
+
+.emsp-input:focus,
+.emsp-select:focus,
+.emsp-textarea:focus {
+  outline: none;
+  border-color: var(--emsp-primary);
+  box-shadow: 0 0 0 3px var(--emsp-primary-alpha);
+}
+
+/* Modals & Popups Glassmorphism */
+.emsp-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  height: 100vh;
+  background: rgba(11, 19, 31, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.emsp-modal-content {
+  background: var(--emsp-bg-surface);
+  border: 1px solid var(--emsp-border-color);
+  border-radius: var(--emsp-radius-lg);
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: var(--emsp-shadow-lg);
+  position: relative;
+  animation: emspScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes emspScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

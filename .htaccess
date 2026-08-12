@@ -1,0 +1,174 @@
+# DÃ©sactiver le listage des rÃ©pertoires
+Options -Indexes
+AddDefaultCharset UTF-8
+AddType application/manifest+json .webmanifest
+AddType application/javascript .js
+<Files "sw.js">
+    <IfModule mod_headers.c>
+        Header set Content-Type "application/javascript; charset=UTF-8"
+        Header set Service-Worker-Allowed "/"
+        Header set Cache-Control "public, max-age=0, must-revalidate"
+    </IfModule>
+</Files>
+<Files "manifest.json">
+    <IfModule mod_headers.c>
+        Header set Content-Type "application/manifest+json; charset=UTF-8"
+    </IfModule>
+</Files>
+
+# Relever les limites d'upload quand Apache tourne avec mod_php.
+<IfModule mod_php.c>
+    php_value upload_max_filesize 70M
+    php_value post_max_size 75M
+    php_value memory_limit 256M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 70M
+    php_value post_max_size 75M
+    php_value memory_limit 256M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 70M
+    php_value post_max_size 75M
+    php_value memory_limit 256M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+
+# Bloquer l'accÃ¨s direct aux fichiers sensibles (noms explicites)
+<FilesMatch "^(?:\.env|composer\.(?:json|lock|phar)|phinx\.php|phinx\.yml|README\.md)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Bloquer l'accÃ¨s direct aux fichiers sensibles (extensions)
+<FilesMatch "\.(sql|bak|log|ini|env|yml|yaml)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+
+
+# Défense en profondeur : la documentation interne ne doit jamais être servie
+# par Apache, même si un fichier documentaire est accidentellement replacé
+# dans le webroot.
+<FilesMatch "\.(?:md|markdown|txt|log|sql)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Bloquer les rapports et audits potentiellement sensibles, meme s'ils restent dans le webroot.
+<FilesMatch "^(?:rapport_.*|.*(?:report|rapport|audit).*\.(?:txt|md|sql|log))$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Bloquer l'accÃ¨s direct au dossier vendor/
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^vendor/ - [F,L]
+</IfModule>
+
+# Conserver les rÃ¨gles de rÃ©Ã©criture existantes
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Bloquer accÃ¨s direct Ã  /uploads/documents/ (accÃ¨s via telecharger.php)
+    RewriteRule ^uploads/documents/thumbs/ - [L]
+    RewriteRule ^uploads/documents/ - [F,L]
+</IfModule>
+
+# En-tÃªtes de sÃ©curitÃ© basiques (si mod_headers est actif)
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+    Header always set X-XSS-Protection "0"
+    # HSTS uniquement lorsque la connexion courante est HTTPS.
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+</IfModule>
+
+# Bloquer les outils de diagnostic locaux / environnement
+<FilesMatch "^(?:check-env|pw_audit|pw_local_check)\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Bloquer les scripts d'audit développement
+<FilesMatch "^(?:pw_audit|pw_local_check)\.js$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Bloquer aussi les fichiers .tmp temporaires
+<FilesMatch "^\.tmp-.*$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# --- Migration MVC : routeur pour les nouvelles URL "propres" ---
+# Manifest PWA dynamique (start_url / scope alignés sur le sous-dossier)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^manifest\.json$ manifest.php [L]
+</IfModule>
+
+# Cas 1 (racine '/') : toujours routee vers router.php, puisque l'ancien
+# index.php n'existe plus physiquement (page d'accueil migree vers
+# App\Controllers\HomeController).
+# Cas 2 (toute autre URL) : routee vers router.php UNIQUEMENT si elle ne
+# correspond a aucun fichier ni dossier reel existant. Les pages non encore
+# migrees continuent donc d'etre servies exactement comme avant.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ router.php [L,QSA]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ router.php [L,QSA]
+</IfModule>
+
+# Protection des dossiers internes du nouveau framework (defense en
+# profondeur, au cas ou l'hebergeur ne permettrait pas de sortir app/ et
+# config/ du webroot)
+<IfModule mod_rewrite.c>
+    RewriteRule ^(app|config|routes|storage)/ - [F,L]
+</IfModule>

@@ -1,0 +1,115 @@
+/* ==========================================================================
+   EMSP DOCS — COMPOSITION DES PAGES & LAYOUTS
+   ========================================================================== */
+
+/* Conteneur principal */
+.emsp-container {
+  width: 100%;
+  max-width: var(--emsp-content-max, 1280px);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--emsp-space-6, 1.5rem);
+  padding-right: var(--emsp-space-6, 1.5rem);
+}
+
+.emsp-container-narrow {
+  max-width: var(--emsp-content-narrow, 860px);
+}
+
+.emsp-container-wide {
+  max-width: var(--emsp-content-wide, 1440px);
+}
+
+/* Section Spacing */
+.emsp-section {
+  padding-top: clamp(var(--emsp-space-8, 2rem), 5vw, 3.5rem);
+  padding-bottom: clamp(var(--emsp-space-8, 2rem), 5vw, 3.5rem);
+}
+
+.emsp-section-sm {
+  padding-top: var(--emsp-space-8, 2rem);
+  padding-bottom: var(--emsp-space-8, 2rem);
+}
+
+.emsp-section-lg {
+  padding-top: clamp(3rem, 7vw, 5rem);
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+/* Structure de page type Dashboard / App */
+.emsp-page-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 2rem;
+  min-height: calc(100vh - 72px);
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+}
+
+@media (max-width: 991.98px) {
+  .emsp-page-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* Sticky Sidebar Layout */
+.emsp-sidebar-sticky {
+  position: sticky;
+  top: 90px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+}
+
+/* Grilles dynamiques responsive */
+.emsp-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.emsp-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.emsp-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .emsp-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .emsp-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .emsp-grid-4,
+  .emsp-grid-3,
+  .emsp-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* En-tête de page unifiée */
+.emsp-page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--emsp-border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.emsp-page-header .emsp-header-title {
+  margin: 0;
+}
