@@ -14,27 +14,72 @@ final class EmailService
         $this->pdo = $pdo ?? Database::pdo();
     }
 
-    public function recentEmailExists(int $userId, string $templateName, int $minutes = 5): bool
+    public function isConfigured(): bool
+    {
+        $apiKey = trim($this->brevoApiKey());
+        $senderEmail = trim($this->brevoSenderEmail());
+
+        return $apiKey !== ''
+            && function_exists('curl_init')
+            && filter_var($senderEmail, FILTER_VALIDATE_EMAIL);
+    }
+
+    public function getLastEmailLog(int $userId, string $templateName): ?array
     {
         if ($userId <= 0 || $templateName === '') {
-            return false;
+            return null;
         }
         $this->ensureEmailLogTable();
 
         $stmt = $this->pdo->prepare(
-            "SELECT 1 FROM email_log
+            "SELECT status, created_at
+             FROM email_log
              WHERE user_id = :uid
                AND template_name = :tpl
-               AND status = 'sent'
-               AND created_at >= DATE_SUB(NOW(), INTERVAL :mins MINUTE)
+             ORDER BY id DESC
              LIMIT 1"
         );
         $stmt->bindValue(':uid', $userId, PDO::PARAM_INT);
         $stmt->bindValue(':tpl', $templateName, PDO::PARAM_STR);
-        $stmt->bindValue(':mins', $minutes, PDO::PARAM_INT);
         $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return (bool) $stmt->fetchColumn();
+        return is_array($row) ? $row : null;
+    }
+
+    public function resendCooldownSeconds(int $userId, string $templateName, int $minutes = 5): int
+    {
+        if ($userId <= 0 || $templateName === '' || $minutes <= 0) {
+            return 0;
+        }
+        $this->ensureEmailLogTable();
+
+        $stmt = $this->pdo->prepare(
+            "SELECT TIMESTAMPDIFF(SECOND, created_at, NOW()) AS elapsed
+             FROM email_log
+             WHERE user_id = :uid
+               AND template_name = :tpl
+               AND status = 'sent'
+             ORDER BY id DESC
+             LIMIT 1"
+        );
+        $stmt->bindValue(':uid', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':tpl', $templateName, PDO::PARAM_STR);
+        $stmt->execute();
+        $elapsed = $stmt->fetchColumn();
+        if ($elapsed === false || $elapsed === null) {
+            return 0;
+        }
+
+        $window = $minutes * 60;
+        $remaining = $window - (int) $elapsed;
+
+        return $remaining > 0 ? $remaining : 0;
+    }
+
+    public function recentEmailExists(int $userId, string $templateName, int $minutes = 5): bool
+    {
+        return $this->resendCooldownSeconds($userId, $templateName, $minutes) > 0;
     }
 
     public function sendVerification(int $userId, string $email, string $firstName, string $lastName, string $token): bool
@@ -143,6 +188,17 @@ final class EmailService
         }
 
         $ok = ($httpCode >= 200 && $httpCode < 300);
+
+        if (!$ok) {
+            error_log(sprintf(
+                'EMSP BREVO send failed | tpl=%s | to=%s | HTTP=%d | curl=%s | resp=%s',
+                $tplName,
+                $toEmail,
+                $httpCode,
+                $curlErr !== '' ? $curlErr : '-',
+                is_string($resp) ? substr($resp, 0, 500) : '-'
+            ));
+        }
 
         if ($userId && $userId > 0) {
             $this->ensureEmailLogTable();

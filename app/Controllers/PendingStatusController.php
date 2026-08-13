@@ -6,13 +6,14 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\LegacyDb;
+use App\Services\EmailService;
 
 final class PendingStatusController extends Controller
 {
     public function index(): void
     {
         if (empty($_SESSION['auth']) || empty($_SESSION['auth_user']['id'])) {
-            flash('warning', 'Connexion requise : vous devez etre connecte pour consulter le statut de votre demande.');
+            flash('warning', 'Connexion requise : vous devez être connecté pour consulter le statut de votre demande.');
             redirect('login');
         }
 
@@ -33,7 +34,7 @@ final class PendingStatusController extends Controller
 
         if (!$user) {
             session_destroy();
-            flash('error', 'Session expiree : veuillez vous reconnecter pour continuer.');
+            flash('error', 'Session expirée : veuillez vous reconnecter pour continuer.');
             redirect('login');
         }
 
@@ -45,11 +46,44 @@ final class PendingStatusController extends Controller
             redirect('dashboard');
         }
 
+        $emailService = new EmailService();
+        $emailConfigured = $emailService->isConfigured();
+        $lastVerificationEmail = $emailService->getLastEmailLog($uid, 'verification');
+        $verificationEmailSent = ($lastVerificationEmail['status'] ?? '') === 'sent';
+        $verificationEmailFailed = ($lastVerificationEmail['status'] ?? '') === 'failed';
+        $cooldownRemaining = $emailConfirmed ? 0 : $emailService->resendCooldownSeconds($uid, 'verification', 5);
+        $lastResendAt = $_SESSION['last_verification_email_sent_at']
+            ?? $_SESSION['pending_last_resend_at']
+            ?? null;
+
+        if ($status === 'rejected') {
+            $accountStatus = 'rejected';
+        } elseif (!$emailConfirmed) {
+            $accountStatus = 'pending_email';
+        } else {
+            $accountStatus = 'pending_admin';
+        }
+
+        if (!empty($_GET['verified']) && $emailConfirmed) {
+            flash('success', 'Email confirmé. Votre dossier est en cours d\'examen par l\'administration.');
+        }
+
         $this->view('pending-status/index', [
             'user' => $user,
             'emailConfirmed' => $emailConfirmed,
             'status' => $status,
             'firstName' => $firstName,
+            'accountStatus' => $accountStatus,
+            'userEmail' => (string) ($user['email'] ?? ''),
+            'emailConfigured' => $emailConfigured,
+            'emailSendFailed' => $verificationEmailFailed,
+            'verificationEmailSent' => $verificationEmailSent,
+            'verificationEmailFailed' => $verificationEmailFailed,
+            'cooldownRemaining' => $cooldownRemaining,
+            'resendCooldown' => $cooldownRemaining,
+            'mailConfigured' => $emailConfigured,
+            'lastResendAt' => $lastResendAt,
+            'page_scripts' => '<script src="' . h(asset('js/emsp-pending-status.js')) . '?v=' . h(asset_version()) . '"></script>',
         ]);
     }
 }
