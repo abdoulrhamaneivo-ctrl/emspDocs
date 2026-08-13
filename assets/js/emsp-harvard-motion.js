@@ -65,8 +65,6 @@
             '.site-main .concours-empty-card',
             '.site-main .institution-stat',
             '.site-main .institution-quote',
-            '.site-main .emsp-login-panel',
-            '.site-main .emsp-register-card',
             '.site-main .emsp-status-card',
             '.site-main .card',
             '#main-content .admin-kpi-card',

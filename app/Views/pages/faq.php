@@ -1,7 +1,7 @@
 <section class="emsp-section py-5 emsp-page-shell">
     <div class="emsp-container emsp-container-narrow">
         <header class="emsp-page-hero emsp-editorial-bg emsp-animate-in mb-5 p-4 p-md-5">
-            <span class="home-section-kicker">Aide EMSP</span>
+            <span class="emsp-auth-kicker emsp-auth-kicker--green">Aide EMSP</span>
             <h1 class="h2 fw-bold font-heading mb-2">FAQ EMSP Docs</h1>
             <p class="emsp-text-lead mb-0">Questions fréquentes sur les comptes, les dépôts, la modération et la consultation.</p>
         </header>

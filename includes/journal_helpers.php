@@ -512,7 +512,7 @@ if (!function_exists('emsp_journal_state')) {
 }
 
 if (!function_exists('emsp_journal_fetch_public_summary')) {
-    function emsp_journal_fetch_public_summary(mysqli $con, int $journalId, int $userId = 0): ?array
+    function emsp_journal_fetch_public_summary(mysqli $con, int $journalId, int $userId = 0, int $commentPage = 1, int $commentsPerPage = 12): ?array
     {
         $stmt = mysqli_prepare($con, "SELECT * FROM journal WHERE id=? AND status='published' LIMIT 1");
         if (!$stmt) {
@@ -578,17 +578,28 @@ if (!function_exists('emsp_journal_fetch_public_summary')) {
             $summary['comment_count'] = (int) ($row['nb'] ?? 0);
         }
 
+        $commentsPerPage = max(1, min(50, $commentsPerPage));
+        $commentPage = max(1, $commentPage);
+        if ($summary['comment_count'] > 0) {
+            $summary['comment_pagination'] = emsp_paginate((int) $summary['comment_count'], $commentPage, $commentsPerPage);
+        } else {
+            $summary['comment_pagination'] = emsp_paginate(0, 1, $commentsPerPage);
+        }
+
         $stmt = mysqli_prepare(
             $con,
             "SELECT jc.id, jc.content, jc.created_at,
-                    u.first_name, u.last_name, u.badge_level, u.photo_path
+                    u.id AS user_id, u.first_name, u.last_name, u.badge_level, u.photo_path
              FROM journal_comments jc
              INNER JOIN users u ON u.id = jc.user_id
              WHERE jc.journal_id=? AND jc.status='visible'
-             ORDER BY jc.created_at ASC"
+             ORDER BY jc.created_at ASC
+             LIMIT ? OFFSET ?"
         );
         if ($stmt) {
-            mysqli_stmt_bind_param($stmt, 'i', $journalId);
+            $limit = (int) ($summary['comment_pagination']['perPage'] ?? $commentsPerPage);
+            $offset = (int) ($summary['comment_pagination']['offset'] ?? 0);
+            mysqli_stmt_bind_param($stmt, 'iii', $journalId, $limit, $offset);
             mysqli_stmt_execute($stmt);
             $rows = emsp_stmt_fetch_all($stmt);
             mysqli_stmt_close($stmt);
@@ -599,6 +610,8 @@ if (!function_exists('emsp_journal_fetch_public_summary')) {
                 $content = function_exists('emsp_fix_mojibake') ? emsp_fix_mojibake((string) ($row['content'] ?? '')) : (string) ($row['content'] ?? '');
                 $summary['comments'][] = [
                     'id' => (int) ($row['id'] ?? 0),
+                    'user_id' => (int) ($row['user_id'] ?? 0),
+                    'profile_url' => emsp_public_profile_url((int) ($row['user_id'] ?? 0)),
                     'content' => $content,
                     'created_at' => (string) ($row['created_at'] ?? ''),
                     'relative_date' => emsp_journal_relative_date((string) ($row['created_at'] ?? '')),

@@ -66,6 +66,7 @@ final class JournalController extends Controller
 
         $articleId = (int) ($params['id'] ?? ($_GET['id'] ?? 0));
         $userId = (int) ($_SESSION['auth_user']['id'] ?? 0);
+        $commentPage = max(1, (int) ($_GET['cmt_page'] ?? 1));
 
         if (!empty($_SESSION['auth_user']['id'])) {
             emsp_mark_notifications_seen_for_section($con, $userId, 'journal');
@@ -74,7 +75,7 @@ final class JournalController extends Controller
             }
         }
 
-        $summary = $articleId > 0 ? emsp_journal_fetch_public_summary($con, $articleId, $userId) : null;
+        $summary = $articleId > 0 ? emsp_journal_fetch_public_summary($con, $articleId, $userId, $commentPage, 12) : null;
         $journalLikes = (int) ($summary['like_count'] ?? 0);
         $journalLiked = !empty($summary['liked']);
         $journalComments = $summary['comments'] ?? [];
@@ -108,6 +109,7 @@ final class JournalController extends Controller
             'journalLiked' => $journalLiked,
             'journalComments' => $journalComments,
             'journalCommentCount' => $journalCommentCount,
+            'journalCommentPagination' => $summary['comment_pagination'] ?? emsp_paginate($journalCommentCount, $commentPage, 12),
             'journalAuthorId' => $journalAuthorId,
             'articleMeta' => $articleMeta,
             'articleTypeKey' => $articleTypeKey,

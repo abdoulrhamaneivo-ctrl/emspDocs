@@ -1,7 +1,7 @@
 <?php
 
 if (!defined('EMSP_ASSET_VERSION')) {
-    define('EMSP_ASSET_VERSION', '20260813x');
+    define('EMSP_ASSET_VERSION', '20260814ah');
 }
 
 if (!function_exists('emsp_nav_current_path')) {
@@ -40,15 +40,11 @@ if (!function_exists('emsp_nav_current_path')) {
 }
 
 if (!function_exists('emsp_mobile_chrome_hidden_paths')) {
-    /** Routes sans barre mobile (auth, suivi inscription). Le dépôt garde la bottom nav. */
+    /** Routes sans barre mobile (flux email uniquement). Pending-status garde la bottom nav. */
     function emsp_mobile_chrome_hidden_paths(): array
     {
         return [
-            'register',
-            'forgot-password',
-            'reset-password',
             'resend-verification',
-            'pending-status',
             'verify-email',
         ];
     }
@@ -347,6 +343,68 @@ if (!function_exists('emsp_user_initials')) {
     }
 }
 
+if (!function_exists('emsp_render_comment_avatar')) {
+    /**
+     * Avatar rond pour fil de commentaires (photo profil ou initiales).
+     */
+    function emsp_render_comment_avatar(?string $photoPath, ?string $firstName, ?string $lastName, string $alt = ''): string
+    {
+        $photoSrc = emsp_user_photo_src((string) $photoPath);
+        $initials = emsp_user_initials($firstName, $lastName);
+        $altAttr = htmlspecialchars($alt !== '' ? $alt : trim($firstName . ' ' . $lastName), ENT_QUOTES, 'UTF-8');
+
+        if ($photoSrc !== '') {
+            return '<img src="' . htmlspecialchars($photoSrc, ENT_QUOTES, 'UTF-8') . '" class="emsp-comment-avatar" width="40" height="40" alt="' . $altAttr . '" loading="lazy" decoding="async">';
+        }
+
+        return '<span class="emsp-comment-avatar emsp-comment-avatar--fallback" aria-hidden="true">' . htmlspecialchars($initials, ENT_QUOTES, 'UTF-8') . '</span>';
+    }
+}
+
+if (!function_exists('emsp_tronc_commun_filiere_value')) {
+    /** Valeur formulaire pour filière non encore affectée (stockée en base comme NULL). */
+    function emsp_tronc_commun_filiere_value(): int
+    {
+        return 0;
+    }
+}
+
+if (!function_exists('emsp_user_filiere_label')) {
+    function emsp_user_filiere_label(?string $filiereName): string
+    {
+        $name = trim((string) $filiereName);
+
+        return $name !== '' ? $name : 'Tronc commun';
+    }
+}
+
+if (!function_exists('emsp_public_profile_url')) {
+    function emsp_public_profile_url(int $userId): string
+    {
+        if ($userId <= 0) {
+            return '';
+        }
+
+        return url('profil-public?id=' . $userId);
+    }
+}
+
+if (!function_exists('emsp_render_comment_author_link')) {
+    function emsp_render_comment_author_link(int $userId, string $innerHtml, string $extraClass = ''): string
+    {
+        if ($userId <= 0) {
+            return $innerHtml;
+        }
+
+        $href = emsp_public_profile_url($userId);
+        $class = trim('emsp-comment-author-link ' . $extraClass);
+
+        return '<a href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8')
+            . '" class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8')
+            . '" rel="nofollow">' . $innerHtml . '</a>';
+    }
+}
+
 if (!function_exists('emsp_is_admin_role')) {
     function emsp_is_admin_role(?string $role): bool
     {
@@ -446,6 +504,59 @@ if (!function_exists('log_audit')) {
         mysqli_stmt_bind_param($stmt, 'issis', $admin_id, $action, $target_type, $target_id, $details);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
+    }
+}
+
+if (!function_exists('emsp_per_page_from_request')) {
+    /** Valeurs autorisées pour ?per_page= (défaut 25). */
+    function emsp_per_page_from_request(int $default = 25): int
+    {
+        $allowed = [10, 20, 25, 50];
+        $perPage = (int) ($_GET['per_page'] ?? $default);
+        return in_array($perPage, $allowed, true) ? $perPage : $default;
+    }
+}
+
+if (!function_exists('emsp_paginate')) {
+    /**
+     * Calcule offset, bornes d'affichage et nombre de pages (page 1-based).
+     *
+     * @return array{page:int,perPage:int,total:int,totalPages:int,offset:int,from:int,to:int}
+     */
+    function emsp_paginate(int $total, int $page, int $perPage = 25): array
+    {
+        $perPage = max(1, min(100, $perPage));
+        $totalPages = max(1, (int) ceil($total / $perPage));
+        $page = max(1, min($page, $totalPages));
+        $offset = ($page - 1) * $perPage;
+        $from = $total > 0 ? $offset + 1 : 0;
+        $to = min($offset + $perPage, $total);
+
+        return [
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'offset' => $offset,
+            'from' => $from,
+            'to' => $to,
+        ];
+    }
+}
+
+if (!function_exists('emsp_include_pagination')) {
+    /**
+     * Affiche le résumé + contrôles Bootstrap (partial includes/partials/pagination.php).
+     *
+     * @param array<string, mixed> $queryParams Paramètres GET à conserver dans les liens
+     */
+    function emsp_include_pagination(array $pagination, string $baseRoute, array $queryParams = [], string $pageParam = 'page'): void
+    {
+        $partial = __DIR__ . '/partials/pagination.php';
+        if (!is_file($partial)) {
+            return;
+        }
+        include $partial;
     }
 }
 

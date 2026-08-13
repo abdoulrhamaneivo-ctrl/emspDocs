@@ -37,11 +37,13 @@
     text-align: center; margin-top: .5rem; font-style: italic;
 }
 .institution-quote {
-    border: 1px solid rgba(0,48,135,.12);
+    border: 1px solid rgba(0, 107, 60, .12);
+    border-top: 2px solid rgba(0, 107, 60, .35);
     padding: 1.1rem 1.4rem;
-    background: #f8f9fc;
+    background: linear-gradient(180deg, rgba(238, 246, 241, .92), #fff);
     border-radius: 16px;
     margin: 1.6rem 0;
+    box-shadow: 0 .65rem 1.75rem rgba(0, 43, 24, .06);
 }
 .institution-quote p {
     font-size: 1.15rem; font-style: italic; margin-bottom: .5rem;
@@ -49,8 +51,12 @@
 .institution-stat { background: #fff; border-radius: 16px; }
 .institution-stat .stat-number { line-height: 1.1; }
 .clearfix::after { content:''; display:table; clear:both; }
-.card-dg { border-left: 4px solid var(--emsp-color-primary) !important; border-radius: 18px; }
-.card-de { border-left: 4px solid var(--emsp-color-primary) !important; border-radius: 18px; }
+.card-dg,
+.card-de {
+  border: 1px solid rgba(0, 107, 60, .12) !important;
+  border-radius: 18px;
+  box-shadow: 0 .65rem 1.75rem rgba(0, 43, 24, .06);
+}
 .dg-photo,
 .de-photo {
     width: 120px;

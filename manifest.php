@@ -8,13 +8,6 @@ declare(strict_types=1);
  */
 require __DIR__ . '/config/pwa-manifest.php';
 
-if (!emsp_pwa_can_expose()) {
-    http_response_code(404);
-    header('Content-Type: text/plain; charset=UTF-8');
-    echo 'Manifest unavailable';
-    exit;
-}
-
 $manifest = emsp_pwa_manifest_payload();
 
 header('Content-Type: application/manifest+json; charset=UTF-8');

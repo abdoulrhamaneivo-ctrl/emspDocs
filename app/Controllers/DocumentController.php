@@ -170,7 +170,8 @@ final class DocumentController extends Controller
 
             $isFav = $isAuth ? $documents->isFavorite($uid, $docId) : false;
             $isLiked = $isAuth ? $documents->isLiked($uid, $docId) : false;
-            $discussion = emsp_document_load_discussion($con, $docId, $uid);
+            $cmtPage = max(1, (int) ($_GET['cmt_page'] ?? 1));
+            $discussion = emsp_document_load_discussion($con, $docId, $uid, $cmtPage, 12);
             $viewData = emsp_document_build_view_data($doc, $docId, $isOwner, $isStaff);
             $previewAvailable = emsp_document_file_available($doc['file_path'] ?? '');
             $previewImageRelative = emsp_doc_thumb_resolve($doc);

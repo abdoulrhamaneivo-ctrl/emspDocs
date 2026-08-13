@@ -1,7 +1,7 @@
 <style>
-.journal-card-annonce { border-left: 4px solid #004D2A; }
-.journal-card-defi { border-left: 4px solid #D4900A; }
-.journal-card-sondage { border-left: 4px solid #006B3C; }
+.journal-card-annonce { border-top: 2px solid #004D2A; border-left: 0; }
+.journal-card-defi { border-top: 2px solid #006B3C; border-left: 0; }
+.journal-card-sondage { border-top: 2px solid #006B3C; border-left: 0; }
 .journal-card {
   overflow: hidden;
   border-radius: 18px;
@@ -372,14 +372,22 @@ $page_scripts = <<<HTML
         var commentsHtml = comments.length
             ? comments.map(function (comment) {
                 var avatar = comment.photo_src
-                    ? '<img src="' + esc(comment.photo_src) + '" alt="" class="rounded-circle journal-comment-avatar-img">'
-                    : '<span class="rounded-circle d-inline-flex align-items-center justify-content-center fw-bold journal-comment-avatar-fallback">' + esc(comment.initials || 'EM') + '</span>';
+                    ? '<img src="' + esc(comment.photo_src) + '" alt="" class="emsp-comment-avatar" width="40" height="40" loading="lazy" decoding="async">'
+                    : '<span class="emsp-comment-avatar emsp-comment-avatar--fallback" aria-hidden="true">' + esc(comment.initials || 'EM') + '</span>';
+                var profileUrl = comment.profile_url || '';
+                var avatarHtml = profileUrl
+                    ? '<a href="' + esc(profileUrl) + '" class="emsp-comment-author-link emsp-comment-author-link--avatar" rel="nofollow">' + avatar + '</a>'
+                    : avatar;
+                var authorName = esc(comment.display_name || 'Utilisateur');
+                var authorHtml = profileUrl
+                    ? '<a href="' + esc(profileUrl) + '" class="emsp-comment-author-link" rel="nofollow"><strong class="emsp-comment-author">' + authorName + '</strong></a>'
+                    : '<strong class="emsp-comment-author">' + authorName + '</strong>';
                 return ''
-                    + '<div class="d-flex gap-3 py-3 border-bottom">'
-                    + '<div>' + avatar + '</div>'
-                    + '<div class="flex-grow-1">'
-                    + '<div class="small text-muted mb-1"><strong>' + esc(comment.display_name || 'Utilisateur') + '</strong> · ' + esc(comment.relative_date || '') + '</div>'
-                    + '<div>' + esc(comment.content || '').replace(/\\n/g, '<br>') + '</div>'
+                    + '<div class="d-flex gap-3 py-3 border-bottom emsp-comment-row">'
+                    + '<div class="emsp-comment-row__avatar">' + avatarHtml + '</div>'
+                    + '<div class="emsp-comment-row__body flex-grow-1">'
+                    + '<div class="small text-muted mb-1 emsp-comment-row__head">' + authorHtml + ' · ' + esc(comment.relative_date || '') + '</div>'
+                    + '<div class="emsp-comment-row__content">' + esc(comment.content || '').replace(/\\n/g, '<br>') + '</div>'
                     + '</div>'
                     + '</div>';
             }).join('')

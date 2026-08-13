@@ -269,6 +269,18 @@ final class UserRepository
         $stmt->execute(['path' => $photoPath, 'id' => $userId]);
     }
 
+    public function updateAcademic(int $userId, ?int $filiereId, ?int $licenceId): void
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE users SET filiere_id = :filiere_id, licence_id = :licence_id WHERE id = :id'
+        );
+        $stmt->execute([
+            'filiere_id' => $filiereId,
+            'licence_id' => $licenceId,
+            'id' => $userId,
+        ]);
+    }
+
     /** @return true|string true si succès, sinon message d'erreur */
     public function changePassword(int $userId, string $currentPassword, string $newPassword): bool|string
     {

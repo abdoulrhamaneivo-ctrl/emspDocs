@@ -242,26 +242,43 @@
                         <?php if ($journalCommentCount === 0): ?>
                             <div class="text-muted small">Aucun commentaire pour le moment.</div>
                         <?php else: ?>
-                            <?php foreach ($journalComments as $jc): ?>
-                                <div class="journal-comment-item">
-                                    <div class="journal-comment-avatar">
-                                        <?php if (!empty($jc['photo_src'])): ?>
-                                            <img src="<?= h((string) $jc['photo_src']) ?>" alt="">
-                                        <?php else: ?>
-                                            <?= h((string) ($jc['initials'] ?? 'EM')) ?>
-                                        <?php endif; ?>
+                            <?php foreach ($journalComments as $jc): $jcAuthorId = (int) ($jc['user_id'] ?? 0); ?>
+                                <div class="journal-comment-item emsp-comment-row">
+                                    <div class="emsp-comment-row__avatar">
+                                        <?= emsp_render_comment_author_link(
+                                            $jcAuthorId,
+                                            emsp_render_comment_avatar(
+                                                (string) ($jc['photo_path'] ?? ''),
+                                                (string) ($jc['first_name'] ?? ''),
+                                                (string) ($jc['last_name'] ?? ''),
+                                                (string) ($jc['display_name'] ?? 'Utilisateur')
+                                            ),
+                                            'emsp-comment-author-link--avatar'
+                                        ) ?>
                                     </div>
-                                    <div>
-                                        <div class="journal-comment-meta">
-                                            <strong><?= h((string) ($jc['display_name'] ?? 'Utilisateur')) ?></strong>
+                                    <div class="emsp-comment-row__body">
+                                        <div class="journal-comment-meta emsp-comment-row__head">
+                                            <?= emsp_render_comment_author_link(
+                                                $jcAuthorId,
+                                                '<strong class="emsp-comment-author">' . h((string) ($jc['display_name'] ?? 'Utilisateur')) . '</strong>'
+                                            ) ?>
                                             · <?= h((string) ($jc['relative_date'] ?? '')) ?>
                                         </div>
-                                        <div class="journal-comment-content"><?= nl2br(h((string) ($jc['content'] ?? ''))) ?></div>
+                                        <div class="journal-comment-content emsp-comment-row__content"><?= nl2br(h((string) ($jc['content'] ?? ''))) ?></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
+
+                    <?php if (!empty($journalCommentPagination) && (int) ($journalCommentPagination['totalPages'] ?? 1) > 1): ?>
+                        <?php emsp_include_pagination(
+                            $journalCommentPagination,
+                            'journal/article',
+                            ['id' => $articleId],
+                            'cmt_page'
+                        ); ?>
+                    <?php endif; ?>
 
                     <?php if (!empty($_SESSION['auth_user']['id'])): ?>
                         <div class="mt-3">
@@ -446,15 +463,22 @@ $page_scripts = <<<HTML
         }
         commentsWrap.innerHTML = comments.map(function (comment) {
             var avatar = comment.photo_src
-                ? '<img src="' + esc(comment.photo_src) + '" alt="">'
-                : esc(comment.initials || 'EM');
-            var avatarClass = comment.photo_src ? 'journal-comment-avatar' : 'journal-comment-avatar';
+                ? '<img src="' + esc(comment.photo_src) + '" alt="" class="emsp-comment-avatar" width="40" height="40" loading="lazy" decoding="async">'
+                : '<span class="emsp-comment-avatar emsp-comment-avatar--fallback" aria-hidden="true">' + esc(comment.initials || 'EM') + '</span>';
+            var profileUrl = comment.profile_url || '';
+            var avatarHtml = profileUrl
+                ? '<a href="' + esc(profileUrl) + '" class="emsp-comment-author-link emsp-comment-author-link--avatar" rel="nofollow">' + avatar + '</a>'
+                : avatar;
+            var authorName = esc(comment.display_name || 'Utilisateur');
+            var authorHtml = profileUrl
+                ? '<a href="' + esc(profileUrl) + '" class="emsp-comment-author-link" rel="nofollow"><strong class="emsp-comment-author">' + authorName + '</strong></a>'
+                : '<strong class="emsp-comment-author">' + authorName + '</strong>';
             return ''
-                + '<div class="journal-comment-item">'
-                + '<div class="' + avatarClass + '">' + avatar + '</div>'
-                + '<div>'
-                + '<div class="journal-comment-meta"><strong>' + esc(comment.display_name || 'Utilisateur') + '</strong> · ' + esc(comment.relative_date || '') + '</div>'
-                + '<div class="journal-comment-content">' + esc(comment.content || '').replace(/\\n/g, '<br>') + '</div>'
+                + '<div class="journal-comment-item emsp-comment-row">'
+                + '<div class="emsp-comment-row__avatar">' + avatarHtml + '</div>'
+                + '<div class="emsp-comment-row__body">'
+                + '<div class="journal-comment-meta emsp-comment-row__head">' + authorHtml + ' · ' + esc(comment.relative_date || '') + '</div>'
+                + '<div class="journal-comment-content emsp-comment-row__content">' + esc(comment.content || '').replace(/\\n/g, '<br>') + '</div>'
                 + '</div>'
                 + '</div>';
         }).join('');

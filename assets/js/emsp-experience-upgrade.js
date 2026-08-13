@@ -19,22 +19,10 @@
         callback();
     }
 
-    function initNavbarScrollState() {
-        var header = document.querySelector('.site-header');
-        if (!header) return;
-
-        var update = function () {
-            header.classList.toggle('is-scrolled', window.scrollY > 20);
-        };
-
-        update();
-        window.addEventListener('scroll', update, { passive: true });
-    }
-
     function initRevealAnimations() {
         var reduce = prefersReducedMotion();
         var nodes = document.querySelectorAll(
-            '.site-main section, .site-main .card, .site-main .home-step-card, .site-main .home-doc-card, .site-main .album-card, .site-main .playlist-item, .site-main .emsp-login-panel, .site-main .emsp-register-card, .site-main .emsp-profile-panel, .site-main .emsp-profile-doc-card, .site-main .emsp-doc-sidebar, .site-main .emsp-doc-comments, .site-main .docs-workspace-card, .site-main .docs-workspace-item, .site-main .docs-workspace-row'
+            '.site-main section, .site-main .card, .site-main .home-step-card, .site-main .home-doc-card, .site-main .album-card, .site-main .playlist-item, .site-main .emsp-profile-panel, .site-main .emsp-profile-doc-card, .site-main .emsp-doc-sidebar, .site-main .emsp-doc-comments, .site-main .docs-workspace-card, .site-main .docs-workspace-item, .site-main .docs-workspace-row'
         );
 
         if (!nodes.length) return;
@@ -458,7 +446,7 @@
         if (prefersReducedMotion()) return;
 
         var targets = document.querySelectorAll(
-            '.home-hero-shell, .multimedia-hero-shell, .journal-shell-header, .emsp-login-side, .emsp-register-banner, .emsp-auth-side, .emsp-reset-side, [data-emsp-parallax-bg]'
+            '.home-hero-shell, .multimedia-hero-shell, .journal-shell-header, [data-emsp-parallax-bg]'
         );
         if (!targets.length) return;
 
@@ -547,46 +535,6 @@
 
         counters.forEach(function (counter) {
             observer.observe(counter);
-        });
-    }
-
-    function initTopbarRotator() {
-        var reduce = prefersReducedMotion();
-        document.querySelectorAll('[data-emsp-topbar-rotator]').forEach(function (rotator) {
-            if (rotator.closest('.emsp-topbar-track--static')) return;
-            var items = Array.prototype.slice.call(rotator.querySelectorAll('.emsp-topbar-rotator-item'));
-            if (items.length <= 1) return;
-
-            var index = 0;
-            var timer = null;
-
-            function activate(nextIndex) {
-                index = ((nextIndex % items.length) + items.length) % items.length;
-                items.forEach(function (item, itemIndex) {
-                    item.classList.toggle('is-active', itemIndex === index);
-                });
-            }
-
-            function stop() {
-                if (!timer) return;
-                window.clearInterval(timer);
-                timer = null;
-            }
-
-            function start() {
-                stop();
-                if (reduce) return;
-                timer = window.setInterval(function () {
-                    activate(index + 1);
-                }, 4200);
-            }
-
-            activate(0);
-            start();
-            rotator.addEventListener('mouseenter', stop);
-            rotator.addEventListener('mouseleave', start);
-            rotator.addEventListener('focusin', stop);
-            rotator.addEventListener('focusout', start);
         });
     }
 
@@ -693,7 +641,6 @@
     onReady(function () {
         if (!isThemeHarvard()) return;
         document.body.classList.add('emsp-experience-upgraded');
-        initNavbarScrollState();
         initRevealAnimations();
         enhancePagination();
         initCarousels();

@@ -154,21 +154,53 @@
                 <p class="text-muted mb-4"><a href="<?= url('login') ?>">Connecte-toi</a> pour commenter.</p>
             <?php endif; ?>
 
-            <?php foreach ($comments as $c): $cid = (int) $c['id']; ?>
-                <article class="emsp-doc-comment">
-                    <p class="mb-1">
-                        <span class="emsp-doc-comment-author"><?= h(trim($c['first_name'] . ' ' . $c['last_name'])) ?></span>
-                        <span class="emsp-doc-comment-date">· <?= h(time_ago((string) $c['created_at'])) ?></span>
-                    </p>
-                    <p class="mb-2"><?= nl2br(h($c['content'])) ?></p>
+            <?php foreach ($comments as $c): $cid = (int) $c['id']; $authorId = (int) ($c['author_id'] ?? 0); ?>
+                <article class="emsp-doc-comment emsp-comment-row" id="comment-<?= $cid ?>">
+                    <div class="emsp-comment-row__avatar">
+                        <?= emsp_render_comment_author_link(
+                            $authorId,
+                            emsp_render_comment_avatar(
+                                (string) ($c['photo_path'] ?? ''),
+                                (string) ($c['first_name'] ?? ''),
+                                (string) ($c['last_name'] ?? ''),
+                                trim(($c['first_name'] ?? '') . ' ' . ($c['last_name'] ?? ''))
+                            ),
+                            'emsp-comment-author-link--avatar'
+                        ) ?>
+                    </div>
+                    <div class="emsp-comment-row__body">
+                        <p class="emsp-comment-row__head mb-1">
+                            <?= emsp_render_comment_author_link(
+                                $authorId,
+                                '<span class="emsp-doc-comment-author emsp-comment-author">' . h(trim($c['first_name'] . ' ' . $c['last_name'])) . '</span>'
+                            ) ?>
+                            <span class="emsp-doc-comment-date emsp-comment-date">· <?= h(time_ago((string) $c['created_at'])) ?></span>
+                        </p>
+                        <p class="emsp-comment-row__content mb-2"><?= nl2br(h($c['content'])) ?></p>
 
-                    <?php foreach (($replies_by_cmt[$cid] ?? []) as $r): ?>
-                        <div class="emsp-doc-comment-reply">
-                            <p class="mb-1">
-                                <span class="emsp-doc-comment-author"><?= h(trim($r['first_name'] . ' ' . $r['last_name'])) ?></span>
-                                <span class="emsp-doc-comment-date">· <?= h(time_ago((string) $r['created_at'])) ?></span>
-                            </p>
-                            <p class="mb-0"><?= nl2br(h($r['content'])) ?></p>
+                    <?php foreach (($replies_by_cmt[$cid] ?? []) as $r): $replyAuthorId = (int) ($r['author_id'] ?? 0); ?>
+                        <div class="emsp-doc-comment-reply emsp-comment-reply">
+                            <div class="emsp-comment-row__avatar emsp-comment-row__avatar--sm">
+                                <?= emsp_render_comment_author_link(
+                                    $replyAuthorId,
+                                    emsp_render_comment_avatar(
+                                        (string) ($r['photo_path'] ?? ''),
+                                        (string) ($r['first_name'] ?? ''),
+                                        (string) ($r['last_name'] ?? '')
+                                    ),
+                                    'emsp-comment-author-link--avatar'
+                                ) ?>
+                            </div>
+                            <div class="emsp-comment-row__body">
+                                <p class="emsp-comment-row__head mb-1">
+                                    <?= emsp_render_comment_author_link(
+                                        $replyAuthorId,
+                                        '<span class="emsp-doc-comment-author emsp-comment-author">' . h(trim($r['first_name'] . ' ' . $r['last_name'])) . '</span>'
+                                    ) ?>
+                                    <span class="emsp-doc-comment-date emsp-comment-date">· <?= h(time_ago((string) $r['created_at'])) ?></span>
+                                </p>
+                                <p class="emsp-comment-row__content mb-0"><?= nl2br(h($r['content'])) ?></p>
+                            </div>
                         </div>
                     <?php endforeach; ?>
 
@@ -182,8 +214,18 @@
                             </div>
                         </form>
                     <?php endif; ?>
+                    </div>
                 </article>
             <?php endforeach; ?>
+
+            <?php if (!empty($cmt_pagination) && (int) ($cmt_pagination['totalPages'] ?? 1) > 1): ?>
+                <?php emsp_include_pagination(
+                    $cmt_pagination,
+                    'document',
+                    ['id' => $doc_id],
+                    'cmt_page'
+                ); ?>
+            <?php endif; ?>
         </section>
 
     </div>

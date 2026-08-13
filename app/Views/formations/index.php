@@ -1,5 +1,5 @@
 
-<section class="formations-shell emsp-page-shell">
+<section class="formations-shell emsp-page-shell emsp-formations-page">
     <div class="container">
         <div class="formations-hero emsp-editorial-bg emsp-institutional-hero emsp-animate-in">
             <span class="emsp-kicker">Formations · EMSP</span>
