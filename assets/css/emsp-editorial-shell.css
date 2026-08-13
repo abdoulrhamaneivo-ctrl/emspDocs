@@ -210,7 +210,7 @@
 .emsp-pdf-preview-wrap {
   position: relative;
   min-height: clamp(12rem, 40dvh, 48rem);
-  max-height: min(82dvh, calc(100dvh - 9rem));
+  max-height: none;
   border: 1px solid #d8e3dc;
   border-radius: .85rem;
   background: #eef2ef;
@@ -238,8 +238,32 @@
 .emsp-pdf-preview-wrap .emsp-inline-pdf-frame,
 .emsp-pdf-preview-wrap .emsp-doc-preview-frame {
   min-height: clamp(12rem, 40dvh, 48rem);
-  max-height: min(75dvh, calc(100dvh - 10rem));
+  max-height: none;
   height: 100%;
+  flex: 1;
+}
+
+.emsp-doc-inline-preview .emsp-pdf-preview-wrap,
+.emsp-doc-preview-modal .emsp-pdf-preview-wrap,
+.docs-quickview-modal .emsp-pdf-preview-wrap {
+  min-height: 0;
+  max-height: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.emsp-doc-inline-preview .emsp-pdf-preview-wrap .emsp-inline-pdf-frame,
+.emsp-doc-inline-preview .emsp-pdf-preview-wrap .emsp-doc-preview-frame,
+.emsp-doc-preview-modal .emsp-pdf-preview-wrap .emsp-inline-pdf-frame,
+.emsp-doc-preview-modal .emsp-pdf-preview-wrap .emsp-doc-preview-frame,
+.docs-quickview-modal .emsp-pdf-preview-wrap .emsp-inline-pdf-frame,
+.docs-quickview-modal .emsp-pdf-preview-wrap .emsp-doc-preview-frame,
+.docs-quickview-modal .emsp-pdf-preview-wrap .docs-quickview-pdf {
+  min-height: 0;
+  max-height: none;
+  height: 100%;
+  flex: 1;
 }
 
 .emsp-pdf-preview-fallback {
@@ -358,7 +382,7 @@
 }
 
 .concours-page-hero .concours-page-kicker {
-  color: #f5d47a;
+  color: #006b3c;
 }
 
 .concours-card {
@@ -510,7 +534,7 @@
   gap: .45rem;
   margin-bottom: .65rem;
   color: var(--emsp-gold-bright);
-  font-family: var(--font-body, 'Atkinson Hyperlegible', sans-serif);
+  font-family: var(--font-body, 'Inter', sans-serif);
   font-size: .72rem;
   font-weight: 700;
   letter-spacing: .14em;
@@ -562,8 +586,8 @@
 .concours-card:hover,
 .emsp-float-card:hover {
   transform: translateY(-3px);
-  border-top-color: var(--emsp-gold) !important;
-  border-color: rgba(200, 148, 22, .42) !important;
+  border-top-color: rgba(0, 107, 60, .35) !important;
+  border-color: rgba(0, 107, 60, .18) !important;
   box-shadow:
     0 .55rem 1.2rem rgba(19, 32, 24, .07),
     0 1.15rem 2.4rem rgba(11, 54, 32, .11);
@@ -673,7 +697,7 @@
 .emsp-institutional-hero h1,
 .home-hero-shell h1,
 .emsp-editorial-bg h1 {
-  font-family: var(--font-display, 'Canela Deck Web', Georgia, serif);
+  font-family: var(--font-display, 'Plus Jakarta Sans', Georgia, serif);
   font-weight: 400;
   letter-spacing: -.03em;
   line-height: 1.06;
@@ -699,7 +723,7 @@
   border: 1px solid rgba(213, 154, 18, .45);
   background: rgba(0, 0, 0, .22);
   color: #f5d47a;
-  font-family: var(--font-body, 'GT America Standard', sans-serif);
+  font-family: var(--font-body, 'Inter', sans-serif);
   font-size: .78rem;
   font-weight: 700;
   letter-spacing: .04em;
@@ -721,7 +745,7 @@
 
 .emsp-page-shell h2,
 .home-section-head h2 {
-  font-family: var(--font-display, 'Canela Deck Web', Georgia, serif);
+  font-family: var(--font-display, 'Plus Jakarta Sans', Georgia, serif);
   color: var(--emsp-green-deep);
   letter-spacing: -.025em;
   line-height: 1.12;
@@ -809,7 +833,7 @@
 
 .emsp-featured-card__title {
   margin: 0;
-  font-family: var(--font-body, 'GT America Standard', sans-serif);
+  font-family: var(--font-body, 'Inter', sans-serif);
   font-size: .92rem;
   font-weight: 700;
   line-height: 1.45;
@@ -1106,7 +1130,7 @@
 }
 
 .institution-stat .stat-number {
-  font-family: var(--font-display, 'Canela Deck Web', Georgia, serif);
+  font-family: var(--font-display, 'Plus Jakarta Sans', Georgia, serif);
   font-size: clamp(1.75rem, 3vw, 2.25rem);
   font-weight: 400;
   color: var(--emsp-green);
@@ -1125,9 +1149,11 @@
 }
 
 .institution-quote {
-  border-left: 4px solid var(--emsp-gold);
-  border-radius: 0 var(--emsp-editorial-radius) var(--emsp-editorial-radius) 0;
-  background: linear-gradient(90deg, rgba(255, 248, 232, .65), rgba(255, 255, 255, .98));
+  border: 1px solid rgba(0, 107, 60, .12);
+  border-top: 2px solid rgba(0, 107, 60, .35);
+  border-radius: var(--emsp-editorial-radius);
+  background: linear-gradient(180deg, rgba(238, 246, 241, .92), rgba(255, 255, 255, .98));
+  box-shadow: 0 .65rem 1.75rem rgba(0, 43, 24, .06);
 }
 
 .formation-card-placeholder {

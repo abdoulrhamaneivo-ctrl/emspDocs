@@ -121,18 +121,37 @@ function emsp_document_load_base(mysqli $con, int $doc_id, array $session): arra
     ];
 }
 
-function emsp_document_load_discussion(mysqli $con, int $doc_id, int $uid): array
+function emsp_document_load_discussion(mysqli $con, int $doc_id, int $uid, int $page = 1, int $perPage = 12): array
 {
+    $perPage = max(1, min(50, $perPage));
+    $page = max(1, $page);
+
+    $countTotal = 0;
+    $countStmt = mysqli_prepare($con,
+        "SELECT COUNT(*) AS nb FROM comments WHERE document_id=? AND status='visible'");
+    if ($countStmt) {
+        mysqli_stmt_bind_param($countStmt, 'i', $doc_id);
+        mysqli_stmt_execute($countStmt);
+        $countRow = emsp_stmt_fetch_assoc($countStmt);
+        mysqli_stmt_close($countStmt);
+        $countTotal = (int) ($countRow['nb'] ?? 0);
+    }
+
+    $pagination = emsp_paginate($countTotal, $page, $perPage);
+    $offset = (int) $pagination['offset'];
+    $limit = (int) $pagination['perPage'];
+
     $cmt_s = mysqli_prepare($con,
         "SELECT c.id, c.content, c.created_at,
                 u.first_name, u.last_name, u.badge_level, u.photo_path, u.id AS author_id
          FROM comments c
          JOIN users u ON u.id = c.user_id
          WHERE c.document_id=? AND c.status='visible'
-         ORDER BY c.created_at ASC");
+         ORDER BY c.created_at ASC
+         LIMIT ? OFFSET ?");
     $comments = [];
     if ($cmt_s) {
-        mysqli_stmt_bind_param($cmt_s, 'i', $doc_id);
+        mysqli_stmt_bind_param($cmt_s, 'iii', $doc_id, $limit, $offset);
         mysqli_stmt_execute($cmt_s);
         $comments = emsp_stmt_fetch_all($cmt_s);
         mysqli_stmt_close($cmt_s);
@@ -227,7 +246,8 @@ function emsp_document_load_discussion(mysqli $con, int $doc_id, int $uid): arra
 
     return [
         'comments' => $comments,
-        'cmt_count' => count($comments),
+        'cmt_count' => $countTotal,
+        'cmt_pagination' => $pagination,
         'replies_by_cmt' => $replies_by_cmt,
         'reaction_labels' => $reaction_labels,
         'reaction_counts' => $reaction_counts,

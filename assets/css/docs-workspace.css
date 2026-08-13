@@ -21,7 +21,7 @@
 }
 
 .docs-workspace-hero-title {
-    font-family: var(--font-display, "Canela Deck Web", Georgia, serif);
+    font-family: var(--font-display, "Plus Jakarta Sans", Georgia, serif);
     font-size: clamp(2rem, 4vw, 2.85rem);
     font-weight: 400;
     letter-spacing: -0.03em;
@@ -236,7 +236,7 @@
 }
 
 .docs-workspace-row-title {
-    font-family: var(--font-display, "Playfair Display", Georgia, serif);
+    font-family: var(--font-display, "Plus Jakarta Sans", Georgia, serif);
     font-size: 1.05rem;
     font-weight: 700;
     line-height: 1.35;
@@ -564,7 +564,7 @@
 }
 
 .docs-workspace-panel-title {
-    font-family: var(--font-display, "Playfair Display", Georgia, serif);
+    font-family: var(--font-display, "Plus Jakarta Sans", Georgia, serif);
     font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -721,19 +721,29 @@
     grid-template-columns: 44px 44px minmax(0, 1fr);
 }
 
-.docs-quickview-modal-head,
-.docs-quickview-modal-head-text {
+.docs-quickview-modal-head {
     min-width: 0;
-    flex: 1;
+    flex: 0 0 auto;
 }
 
 .docs-quickview-modal-title {
-    overflow: visible;
-    text-overflow: unset;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    hyphens: none;
-    line-height: 1.35;
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding-right: .35rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: .8125rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: #52665a;
+}
+
+.docs-quickview-close {
+    flex-shrink: 0;
+    margin: 0;
+    padding: .35rem;
 }
 
 .docs-workspace-bottomsheet,
@@ -745,62 +755,99 @@
 .docs-quickview-modal .modal-content {
     border-radius: 8px;
     overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
-.docs-quickview-modal .modal-dialog {
-    max-width: min(58rem, calc(100vw - 1.5rem));
+.docs-quickview-modal .modal-dialog,
+.docs-quickview-modal .docs-quickview-dialog {
+    width: min(95vw, 960px);
+    max-width: none !important;
+    height: min(92vh, 920px);
+    max-height: min(92vh, 920px);
+    margin: clamp(.5rem, 1.5dvh, 1rem) auto;
 }
 
-@media (max-width: 767.98px) {
-    .docs-quickview-modal .modal-dialog {
-        width: calc(100% - 1rem);
-        max-width: none;
-        height: calc(100dvh - 1rem);
-        max-height: calc(100dvh - 1rem);
-        margin: .5rem auto;
-    }
-
-    .docs-quickview-modal .modal-content {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .docs-quickview-body {
-        flex: 1;
-        min-height: 0;
-        overflow: auto;
-        padding: .65rem;
-    }
-
-    .docs-quickview-stage {
-        min-height: clamp(16rem, 68dvh, 48rem);
-        display: flex;
-        flex-direction: column;
-    }
-
-    .docs-quickview-stage .emsp-pdf-preview-wrap {
-        flex: 1;
-        min-height: clamp(16rem, 62dvh, 44rem);
-        max-height: none;
-    }
-
-    .docs-quickview-stage iframe {
-        min-height: clamp(16rem, 62dvh, 44rem);
-    }
+.docs-quickview-modal .modal-header.docs-quickview-modal-head {
+    flex-shrink: 0;
+    align-items: center;
+    gap: .35rem;
+    padding: .3rem .45rem;
+    min-height: 0;
+    border-bottom: 0;
+    background: #fff;
 }
 
 .docs-quickview-body {
-    padding: 1rem;
-    background: var(--docs-bg);
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background: #fff;
+    overflow: hidden;
 }
 
 .docs-quickview-stage {
-    min-height: 300px;
-    border-radius: 6px;
-    border: 1px solid var(--docs-border);
+    flex: 1 1 90%;
+    min-height: 0;
+    border-radius: 0;
+    border: 0;
     background: #fff;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.docs-quickview-footer {
+    flex: 0 0 auto;
+    padding: .2rem .45rem .35rem;
+}
+
+.docs-quickview-footer .docs-quickview-open {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    border-top: 0;
+    background: transparent;
+}
+
+.docs-quickview-footer .docs-quickview-open a {
+    font-size: .8125rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--docs-primary);
+    text-decoration: none;
+}
+
+.docs-quickview-footer .docs-quickview-open a:hover {
+    color: #af7800;
+    text-decoration: underline;
+}
+
+.docs-quickview-stage .emsp-pdf-preview-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+}
+
+.docs-quickview-stage .emsp-pdf-preview-wrap .docs-quickview-pdf,
+.docs-quickview-stage iframe,
+.docs-quickview-stage img,
+.docs-quickview-stage embed {
+    width: 100%;
+    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    border: 0;
+    display: block;
 }
 
 .docs-quickview-loading {
@@ -816,10 +863,10 @@
 
 .docs-quickview-open {
     display: flex;
-    justify-content: flex-end;
-    padding: .65rem .9rem;
-    border-top: 1px solid var(--docs-border);
-    background: #fff;
+    justify-content: center;
+    padding: 0;
+    border-top: 0;
+    background: transparent;
 }
 
 .docs-quickview-open a {
@@ -828,13 +875,57 @@
     text-decoration: none;
 }
 
-.docs-quickview-stage iframe,
-.docs-quickview-stage img,
-.docs-quickview-stage embed {
-    width: 100%;
-    min-height: 68vh;
-    border: 0;
-    display: block;
+@media (max-width: 767.98px) {
+    .docs-quickview-modal .modal-dialog,
+    .docs-quickview-modal .docs-quickview-dialog {
+        width: calc(100% - .5rem);
+        height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - .5rem);
+        max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - .5rem);
+        margin: max(.25rem, env(safe-area-inset-top, 0px)) auto max(.25rem, env(safe-area-inset-bottom, 0px));
+    }
+
+    .docs-quickview-modal .modal-header.docs-quickview-modal-head {
+        position: absolute;
+        inset: 0 0 auto 0;
+        z-index: 6;
+        padding: max(.35rem, env(safe-area-inset-top, 0px)) max(.35rem, env(safe-area-inset-right, 0px)) .35rem .35rem;
+        background: transparent;
+        border: 0;
+        pointer-events: none;
+    }
+
+    .docs-quickview-modal-title {
+        display: none;
+    }
+
+    .docs-quickview-close {
+        pointer-events: auto;
+        margin-left: auto;
+        background: rgba(255, 255, 255, .94);
+        border-radius: 999px;
+        box-shadow: 0 1px 6px rgba(15, 35, 24, .18);
+    }
+
+    .docs-quickview-body {
+        flex: 1 1 auto;
+        padding: 0;
+    }
+
+    .docs-quickview-stage {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .docs-quickview-footer {
+        padding: .25rem .45rem calc(.35rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .docs-quickview-stage .emsp-pdf-preview-wrap,
+    .docs-quickview-stage iframe,
+    .docs-quickview-stage .docs-quickview-pdf {
+        min-height: 0;
+        height: 100%;
+    }
 }
 
 .docs-quickview-fallback {
@@ -1087,15 +1178,18 @@
         padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
     }
 
-    .docs-quickview-modal .modal-dialog {
+    .docs-quickview-modal .modal-dialog,
+    .docs-quickview-modal .docs-quickview-dialog {
         margin: .5rem;
         max-width: none;
     }
 
     .docs-quickview-stage iframe,
     .docs-quickview-stage img,
-    .docs-quickview-stage embed {
-        min-height: 60dvh;
+    .docs-quickview-stage embed,
+    .docs-quickview-stage .docs-quickview-pdf {
+        min-height: 0;
+        height: 100%;
     }
 }
 
@@ -1351,17 +1445,21 @@
         padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
     }
 
-    .docs-quickview-modal .modal-dialog {
+    .docs-quickview-modal .modal-dialog,
+    .docs-quickview-modal .docs-quickview-dialog {
         margin: 0 !important;
         width: 100% !important;
         max-width: none !important;
-        height: 100dvh;
-        min-height: 100dvh;
+        height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+        min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
     }
 
     .docs-quickview-modal .modal-content {
+        height: 100%;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
         border-radius: 0 !important;
-        min-height: 100dvh;
     }
 
     .docs-workspace-root[data-view-mode="grid"] .docs-workspace-card {
@@ -1531,7 +1629,7 @@
     background: #f4f7f5;
 }
 
-.emsp-pdf-preview-wrap.has-poster-thumb {
+.emsp-pdf-preview-wrap.has-poster-thumb:not(.emsp-pdf-preview-wrap--modal) {
     min-height: min(52vh, 28rem);
 }
 

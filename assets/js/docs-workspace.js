@@ -529,23 +529,26 @@
         });
     }
 
-    function resetQuickViewStage(stage) {
-        if (!stage) {
-            return;
+    function resetQuickViewStage(stage, footer) {
+        if (stage) {
+            stage.querySelectorAll('iframe[data-emsp-pdf-preview="1"]').forEach(function (frame) {
+                if (window.emspPdfPreview && typeof window.emspPdfPreview.reset === 'function') {
+                    window.emspPdfPreview.reset(frame);
+                }
+            });
+            stage.innerHTML = '';
         }
-        stage.querySelectorAll('iframe[data-emsp-pdf-preview="1"]').forEach(function (frame) {
-            if (window.emspPdfPreview && typeof window.emspPdfPreview.reset === 'function') {
-                window.emspPdfPreview.reset(frame);
-            }
-        });
-        stage.innerHTML = '';
+        if (footer) {
+            footer.innerHTML = '';
+            footer.hidden = true;
+        }
     }
 
     function createQuickView(root) {
         const modal = root.querySelector('.docs-quickview-modal');
         const title = root.querySelector('[data-role="quickview-title"]');
-        const meta = root.querySelector('[data-role="quickview-meta"]');
         const stage = root.querySelector('[data-role="quickview-stage"]');
+        const footer = root.querySelector('[data-role="quickview-footer"]');
         let bootstrapModal = null;
 
         if (modal) {
@@ -579,7 +582,7 @@
                 if (active && modal.contains(active)) {
                     active.blur();
                 }
-                resetQuickViewStage(stage);
+                resetQuickViewStage(stage, footer);
                 cleanupArtifacts();
             });
 
@@ -591,11 +594,24 @@
                         modal.classList.remove('show');
                         modal.style.display = 'none';
                         modal.setAttribute('aria-hidden', 'true');
-                        resetQuickViewStage(stage);
+                        resetQuickViewStage(stage, footer);
                         cleanupArtifacts();
                     }
                 }
             });
+        }
+
+        function setQuickViewFooter(html) {
+            if (!footer) {
+                return;
+            }
+            if (html) {
+                footer.innerHTML = html;
+                footer.hidden = false;
+            } else {
+                footer.innerHTML = '';
+                footer.hidden = true;
+            }
         }
 
         function mountQuickViewPdf() {
@@ -607,16 +623,21 @@
             }
         }
 
+        function quickViewFooterLink(documentUrl, newTab) {
+            const targetAttrs = newTab ? ' target="_blank" rel="noopener"' : '';
+            return '<div class="docs-quickview-open"><a href="' + escapeHtml(documentUrl) + '"' + targetAttrs + '>Voir la fiche du document <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>';
+        }
+
         function show(item) {
-            if (!modal || !title || !meta || !stage) {
+            if (!modal || !stage) {
                 return;
             }
-            title.textContent = item.title || 'Aperçu';
-            meta.innerHTML = '' +
-                '<span class="docs-workspace-status">' + escapeHtml(item.typeLabel) + '</span>' +
-                '<span class="docs-workspace-status">' + escapeHtml(item.fileExt) + '</span>' +
-                '<span class="docs-workspace-status">' + escapeHtml(item.sizeLabel) + '</span>' +
-                '<span class="docs-workspace-status">' + escapeHtml(item.dateLabel) + '</span>';
+            const docTitle = item.title || 'Aperçu';
+            if (title) {
+                title.textContent = docTitle;
+                title.title = docTitle;
+            }
+            modal.setAttribute('aria-label', 'Aperçu : ' + docTitle);
 
             if (item.pdfViewerUrl || item.pdfDataUrl || (item.fileKind === 'pdf' && item.previewUrl)) {
                 const pdfDataUrl = item.pdfDataUrl || (item.previewUrl || item.pdfViewerUrl || '').replace(/([?&])preview=1/, '$1pdfdata=1');
@@ -626,7 +647,7 @@
                     ? '<img src="' + escapeHtml(thumbUrl) + '" alt="" class="emsp-pdf-preview-poster" aria-hidden="true">'
                     : '';
                 stage.innerHTML = '' +
-                    '<div class="emsp-pdf-preview-wrap' + (thumbUrl ? ' has-poster-thumb' : '') + '">' +
+                    '<div class="emsp-pdf-preview-wrap emsp-pdf-preview-wrap--modal' + (thumbUrl ? ' has-poster-thumb' : '') + '">' +
                         posterHtml +
                         '<div class="emsp-pdf-preview-loading" aria-live="polite">' +
                             '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Chargement de l\'aperçu…' +
@@ -636,24 +657,21 @@
                             ' data-pdf-data-url="' + escapeHtml(pdfDataUrl) + '"' +
                             ' data-preview-url="' + escapeHtml(previewUrl) + '"' +
                             ' data-fallback-thumb="' + escapeHtml(thumbUrl) + '"></iframe>' +
-                    '</div>' +
-                    '<p class="emsp-doc-preview-note">Défilez le document dans la modale — aucun téléchargement n’est lancé.</p>' +
-                    '<div class="docs-quickview-open"><a href="' + escapeHtml(item.documentUrl) + '">Voir la fiche du document <i class="bi bi-arrow-up-right"></i></a></div>';
+                    '</div>';
+                setQuickViewFooter(quickViewFooterLink(item.documentUrl, false));
             } else if (item.fileKind === 'image' && item.previewUrl) {
                 stage.innerHTML = '' +
                     '<figure class="docs-quickview-figure">' +
                         '<img src="' + escapeHtml(item.previewUrl) + '" alt="' + escapeHtml(item.title) + '">' +
-                        '<figcaption>Aperçu image — sans téléchargement.</figcaption>' +
-                    '</figure>' +
-                    '<div class="docs-quickview-open"><a href="' + escapeHtml(item.documentUrl) + '">Voir la fiche du document <i class="bi bi-arrow-up-right"></i></a></div>';
+                    '</figure>';
+                setQuickViewFooter(quickViewFooterLink(item.documentUrl, false));
             } else if (item.previewImageUrl) {
                 const imageUrl = item.previewImageUrl || item.previewUrl;
                 stage.innerHTML = '' +
                     '<figure class="docs-quickview-figure">' +
                         '<img src="' + escapeHtml(imageUrl) + '" alt="Premiere page de ' + escapeHtml(item.title) + '">' +
-                        '<figcaption>Premiere page du document. Cet apercu ne lance aucun telechargement.</figcaption>' +
-                    '</figure>' +
-                    '<div class="docs-quickview-open"><a href="' + escapeHtml(item.documentUrl) + '" target="_blank" rel="noopener">Voir la fiche du document <i class="bi bi-arrow-up-right"></i></a></div>';
+                    '</figure>';
+                setQuickViewFooter(quickViewFooterLink(item.documentUrl, true));
             } else {
                 stage.innerHTML = '' +
                     '<div class="docs-quickview-fallback">' +
@@ -669,6 +687,7 @@
                             renderDownloadForm(item, false) +
                         '</div>' +
                     '</div>';
+                setQuickViewFooter('');
             }
 
             if (window.bootstrap && window.bootstrap.Modal) {

@@ -145,17 +145,15 @@ $__av = asset_version();
 
     <div class="modal fade docs-quickview-modal" id="docsQuickViewModal" tabindex="-1" aria-hidden="true"
          data-emsp-motion-modal="1" data-bs-backdrop="true" data-bs-keyboard="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered docs-quickview-dialog">
             <div class="modal-content border-0">
-                <div class="modal-header border-bottom docs-quickview-modal-head">
-                    <div class="docs-quickview-modal-head-text">
-                        <h5 class="modal-title font-heading fw-bold docs-quickview-modal-title" data-role="quickview-title">Aperçu rapide</h5>
-                        <div class="docs-workspace-quick-badges" data-role="quickview-meta"></div>
-                    </div>
-                    <button type="button" class="btn-close emsp-modal-close-touch" data-bs-dismiss="modal" aria-label="Fermer l'aperçu"></button>
+                <div class="modal-header border-0 docs-quickview-modal-head">
+                    <p class="docs-quickview-modal-title" data-role="quickview-title" title=""></p>
+                    <button type="button" class="btn-close docs-quickview-close emsp-modal-close-touch" data-bs-dismiss="modal" aria-label="Fermer l'aperçu"></button>
                 </div>
                 <div class="docs-quickview-body p-0">
                     <div class="docs-quickview-stage" data-role="quickview-stage"></div>
+                    <div class="docs-quickview-footer" data-role="quickview-footer" hidden></div>
                 </div>
             </div>
         </div>
