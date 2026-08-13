@@ -307,6 +307,8 @@ p, h1, h2, h3, h4, h5, h6,
 /* Flash messages */
 .flash-message,
 .alert-floating,
+#emsp-flash-root,
+#emsp-flash-root,
 #flash-container {
     position: fixed;
     top: calc(var(--total-top-offset, 70px) + 10px);
@@ -1183,7 +1185,7 @@ html.theme-harvard body.emsp-route-document .stats-bar #lk-error.stat-item {
     text-decoration: none;
     font-size: 11px;
     font-weight: 600;
-    font-family: var(--font-sans, 'Lato', sans-serif);
+    font-family: var(--font-sans, 'Inter', sans-serif);
     transition: color 0.2s ease;
     min-height: 44px; /* touch target minimum */
 }
@@ -1503,540 +1505,6 @@ html.theme-harvard .doc-hero {
 }
 
 /* ============================================================
-   Register method choice — horizontal + immersive
-   ============================================================ */
-html.theme-harvard body.emsp-route-register .emsp-register-method-grid {
-    display: flex;
-    gap: 14px;
-    overflow-x: auto;
-    padding: 4px 2px 8px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-grid::-webkit-scrollbar {
-    height: 6px;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-grid::-webkit-scrollbar-thumb {
-    background: rgba(0, 107, 60, 0.28);
-    border-radius: 999px;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-card {
-    min-width: min(420px, 88vw);
-    scroll-snap-align: start;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-card.is-preview-focus {
-    border-color: rgba(245, 168, 0, 0.45) !important;
-    box-shadow: 0 14px 30px rgba(15, 46, 30, 0.16) !important;
-    transform: translateY(-2px);
-}
-
-@media (max-width: 767.98px) {
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card {
-        min-width: min(340px, 90vw);
-        padding: 14px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-body > span:not(.emsp-register-method-card-meta):not(.emsp-register-method-card-list) {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-list {
-        display: none;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card.is-active .emsp-register-method-card-list {
-        display: grid;
-    }
-}
-
-@media (min-width: 992px) {
-    html.theme-harvard body.emsp-route-register .emsp-register-method-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        overflow: visible;
-        padding: 0;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card {
-        min-width: 0;
-    }
-}
-
-html.theme-harvard body.emsp-route-register #emsp-register-flow[data-active-method='school_email'] {
-    --emsp-register-accent: #006b3c;
-    --emsp-register-accent-soft: rgba(0, 107, 60, 0.08);
-}
-
-html.theme-harvard body.emsp-route-register #emsp-register-flow[data-active-method='manual_card'] {
-    --emsp-register-accent: #b7791f;
-    --emsp-register-accent-soft: rgba(245, 168, 0, 0.14);
-}
-
-html.theme-harvard body.emsp-route-register #emsp-register-flow[data-active-method='none'] {
-    --emsp-register-accent: var(--emsp-color-primary);
-    --emsp-register-accent-soft: var(--emsp-primary-alpha);
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-card {
-    border-radius: 28px;
-    overflow: hidden;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    margin-bottom: 22px;
-    padding: 18px 20px;
-    border-radius: 22px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 248, 252, 0.98) 100%);
-    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.05);
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher strong,
-html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher span {
-    display: block;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher strong {
-    color: #10233d;
-    margin: 6px 0 4px;
-    font-size: 1.06rem;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher > div > span:last-child {
-    color: #526072;
-    line-height: 1.6;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher.is-selected {
-    border-left: 6px solid var(--emsp-register-accent, var(--color-primary));
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-chooser-overlay {
-    display: none;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-progress {
-    position: sticky;
-    top: 88px;
-    z-index: 4;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    border-radius: 18px;
-    padding: 12px;
-    margin-bottom: 24px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-choice-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    margin: 20px 0 18px;
-    padding: 18px 20px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, rgba(12, 32, 58, 0.96) 0%, rgba(24, 53, 87, 0.96) 100%);
-    color: #fff;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-choice-banner strong,
-html.theme-harvard body.emsp-route-register .emsp-register-choice-banner span {
-    display: block;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-choice-banner strong {
-    font-size: 1rem;
-    margin-bottom: 6px;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-choice-banner > div > span {
-    color: rgba(255, 255, 255, 0.78);
-    line-height: 1.6;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-choice-banner-badge {
-    flex-shrink: 0;
-    padding: 10px 14px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    font-size: 0.82rem;
-    font-weight: 700;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-grid {
-    gap: 18px;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-card {
-    min-height: 100%;
-    padding: 22px;
-    border-radius: 24px;
-    border-width: 2px;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-card-body strong {
-    font-size: 1.05rem;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-card-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 16px;
-    font-weight: 700;
-    color: var(--emsp-register-accent, var(--color-primary));
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-card.is-active {
-    border-color: var(--emsp-register-accent, rgba(245, 168, 0, 0.45));
-    background: linear-gradient(180deg, #ffffff 0%, var(--emsp-register-accent-soft, rgba(0, 107, 60, 0.08)) 100%);
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-compare {
-    display: grid;
-    gap: 0;
-    margin-top: 20px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 22px;
-    overflow: hidden;
-    background: #fff;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-compare-row {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr 1fr;
-    gap: 16px;
-    padding: 14px 18px;
-    border-top: 1px solid rgba(15, 23, 42, 0.08);
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-compare-row:first-child {
-    border-top: 0;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-compare-head {
-    background: rgba(15, 23, 42, 0.04);
-    font-weight: 700;
-    color: #10233d;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-summary,
-html.theme-harvard body.emsp-route-register .emsp-register-route-switcher,
-html.theme-harvard body.emsp-route-register .emsp-register-form-block {
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 22px;
-    background: #fff;
-    box-shadow: 0 14px 40px rgba(15, 23, 42, 0.05);
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-summary {
-    display: flex;
-    justify-content: space-between;
-    gap: 18px;
-    padding: 20px 22px;
-    border-left: 6px solid var(--emsp-register-accent, var(--color-primary));
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-route-switcher {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 18px;
-    padding: 12px 16px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(244, 247, 251, 0.96) 100%);
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-route-switcher-label {
-    font-weight: 700;
-    color: #10233d;
-    margin-right: 4px;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-route-switcher .btn.active {
-    color: #fff;
-    border-color: transparent;
-    background: var(--emsp-register-accent, var(--color-primary));
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-form-block {
-    padding: 20px 22px;
-    margin-bottom: 18px;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-form-block-head {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 16px;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-form-block-head strong {
-    color: #10233d;
-    font-size: 1rem;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-form-block-head span {
-    color: #526072;
-    line-height: 1.6;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-form-block-security {
-    background: linear-gradient(180deg, #ffffff 0%, rgba(248, 250, 252, 0.96) 100%);
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-sheet-close {
-    display: none;
-}
-
-@media (max-width: 991.98px) {
-    html.theme-harvard body.emsp-route-register .emsp-register-progress {
-        top: 72px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-choice-banner,
-    html.theme-harvard body.emsp-route-register .emsp-register-method-summary {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-compare-row {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-}
-
-@media (max-width: 767.98px) {
-    body.emsp-register-chooser-open {
-        overflow: hidden;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-card {
-        border-radius: 22px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher {
-        position: sticky;
-        top: 72px;
-        z-index: 5;
-        padding: 12px 14px;
-        border-radius: 18px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher .btn {
-        width: 100%;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher #register-chooser-launcher-copy,
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher .emsp-register-method-eyebrow {
-        display: none;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher strong {
-        margin: 0;
-        font-size: 1rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(7, 16, 29, 0.56);
-        backdrop-filter: blur(6px);
-        z-index: 1040;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.25s ease;
-        display: block;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-overlay.is-visible {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-step {
-        position: fixed;
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
-        z-index: 1045;
-        max-height: calc(100vh - 88px);
-        overflow: auto;
-        padding: 14px;
-        border-radius: 24px 24px 18px 18px;
-        background: #fff;
-        box-shadow: 0 32px 70px rgba(7, 16, 29, 0.32);
-        transform: translateY(calc(100% + 24px));
-        transition: transform 0.28s ease;
-    }
-
-    body.emsp-register-chooser-open .emsp-register-method-step {
-        transform: translateY(0) !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-sheet-close {
-        position: sticky;
-        top: 0;
-        margin-left: auto;
-        margin-bottom: 8px;
-        width: 42px;
-        height: 42px;
-        border: 0;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.08);
-        color: #10233d;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-progress {
-        display: none !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-step .emsp-register-method-eyebrow,
-    html.theme-harvard body.emsp-route-register .emsp-register-method-step > p.text-muted {
-        display: none;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card {
-        min-width: 100%;
-        padding: 14px;
-        border-radius: 16px;
-        gap: 12px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-step h3 {
-        margin: 0 0 10px !important;
-        font-size: 1.35rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-form-block,
-    html.theme-harvard body.emsp-route-register .emsp-register-method-summary,
-    html.theme-harvard body.emsp-route-register .emsp-register-route-switcher {
-        padding: 14px;
-        border-radius: 16px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-summary {
-        margin-bottom: 10px !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-summary .emsp-register-method-eyebrow,
-    html.theme-harvard body.emsp-route-register #register-method-summary-copy,
-    html.theme-harvard body.emsp-route-register .emsp-register-method-hint,
-    html.theme-harvard body.emsp-route-register .emsp-register-form-block-head span,
-    html.theme-harvard body.emsp-route-register #email-method-help,
-    html.theme-harvard body.emsp-route-register .form-text {
-        display: none !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-summary-title,
-    html.theme-harvard body.emsp-route-register .emsp-register-form-block-head strong {
-        font-size: 0.98rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-form-stage .row.g-3 {
-        --bs-gutter-y: 0.65rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-form-block .form-label {
-        font-size: 0.92rem;
-        margin-bottom: 0.35rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-form-block .form-control,
-    html.theme-harvard body.emsp-route-register .emsp-register-form-block .form-select {
-        min-height: 46px;
-        padding-top: 0.55rem;
-        padding-bottom: 0.55rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-route-switcher .btn {
-        width: 100%;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-icon {
-        width: 46px;
-        height: 46px;
-        border-radius: 12px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-body strong {
-        font-size: 1rem;
-        margin-bottom: 4px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-lead {
-        font-size: 0.95rem;
-        line-height: 1.45;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-detail,
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-cta {
-        display: none !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-card {
-        border-radius: 18px;
-        padding: 14px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-card > .mb-4 {
-        margin-bottom: 10px !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-card > .mb-4 h1 {
-        font-size: 1.9rem;
-        margin-bottom: 6px !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-card > .mb-4 p {
-        margin-bottom: 0 !important;
-        font-size: 0.98rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-route-switcher,
-    html.theme-harvard body.emsp-route-register .emsp-register-live-preview {
-        display: none !important;
-    }
-
-    html.theme-harvard body.emsp-route-register #register-submit-button {
-        margin-top: 12px !important;
-        min-height: 50px;
-        font-size: 1rem;
-    }
-}
-
-html.theme-harvard body.emsp-route-register .emsp-choice-pulse {
-    animation: emspChoicePulse 0.8s ease;
-}
-
-@keyframes emspChoicePulse {
-    0% { box-shadow: 0 0 0 0 rgba(0, 107, 60, 0); }
-    30% { box-shadow: 0 0 0 10px rgba(0, 107, 60, 0.12); }
-    100% { box-shadow: 0 0 0 0 rgba(0, 107, 60, 0); }
-}
-
-/* ============================================================
    Broken image placeholder
    ============================================================ */
 img.emsp-img-broken {
@@ -2056,8 +1524,8 @@ img.emsp-img-broken {
 /* Light text on light backgrounds - enforce minimum contrast */
 .text-muted,
 .form-text,
-small:not(.home-hero small):not(.emsp-register-banner small),
-.small:not(.home-hero .small):not(.emsp-register-banner .small) {
+small:not(.home-hero small),
+.small:not(.home-hero .small) {
     color: #5a6268 !important;
 }
 
@@ -2074,8 +1542,7 @@ small:not(.home-hero small):not(.emsp-register-banner small),
 }
 
 /* White text on green/dark backgrounds - ensure visibility */
-.home-hero p.lead,
-.emsp-register-banner p {
+.home-hero p.lead {
     color: rgba(255, 255, 255, 0.92);
 }
 
@@ -2112,15 +1579,6 @@ small:not(.home-hero small):not(.emsp-register-banner small),
 
 .home-step-card p {
     color: #4a5568;
-}
-
-/* Register aside text contrast */
-.emsp-register-aside .text-muted {
-    color: #4a5568 !important;
-}
-
-.emsp-register-aside strong {
-    color: #1a1a1a;
 }
 
 /* Concours cards - ensure kicker readability */
@@ -2309,151 +1767,6 @@ a.text-warning,
     border-color: rgba(148, 163, 184, 0.32);
 }
 
-@media (min-width: 992px) {
-    html.theme-harvard body.emsp-route-register .emsp-register-shell .container {
-        max-width: 980px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-banner {
-        display: none !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-banner-points,
-    html.theme-harvard body.emsp-route-register .emsp-register-choice-banner,
-    html.theme-harvard body.emsp-route-register .emsp-register-compare,
-    html.theme-harvard body.emsp-route-register .emsp-register-live-preview {
-        display: none !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-card {
-        padding: 18px;
-        border-radius: 24px;
-        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.04);
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-card > .mb-4 {
-        margin-bottom: 12px !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-progress {
-        display: none !important;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher {
-        margin-bottom: 10px;
-        padding: 10px 12px;
-        border-radius: 14px;
-        box-shadow: none;
-        background: #f8fafc;
-        cursor: pointer;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher .emsp-register-method-eyebrow,
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher #register-chooser-launcher-copy {
-        display: none;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-chooser-launcher strong {
-        margin: 0;
-        font-size: 0.98rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-grid {
-        gap: 12px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card {
-        min-height: 0;
-        padding: 16px 18px;
-        border-radius: 18px;
-        box-shadow: none;
-        align-items: center;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-step .emsp-register-method-eyebrow,
-    html.theme-harvard body.emsp-route-register .emsp-register-method-step > p.text-muted {
-        display: none;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-step h3 {
-        margin-top: 0 !important;
-        margin-bottom: 10px !important;
-        font-size: 1.6rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-body strong {
-        font-size: 1rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-body {
-        width: 100%;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-lead {
-        margin-top: 6px;
-        color: #5f6b7a;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-detail {
-        display: grid;
-        gap: 10px;
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-        transform: translateY(-6px);
-        transition: opacity .2s ease, transform .2s ease, max-height .25s ease, margin-top .25s ease;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card:hover .emsp-register-method-card-detail,
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card:focus-visible .emsp-register-method-card-detail,
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card.is-active .emsp-register-method-card-detail {
-        max-height: 220px;
-        opacity: 1;
-        transform: translateY(0);
-        margin-top: 12px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-list {
-        gap: 4px;
-        margin-top: 10px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-list span {
-        font-size: 12px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-card-cta {
-        margin-top: 10px;
-        font-size: 0.95rem;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-method-summary,
-    html.theme-harvard body.emsp-route-register .emsp-register-route-switcher,
-    html.theme-harvard body.emsp-route-register .emsp-register-form-block,
-    html.theme-harvard body.emsp-route-register .emsp-register-method-hint {
-        box-shadow: none;
-        border-radius: 14px;
-    }
-
-    html.theme-harvard body.emsp-route-register .emsp-register-form-block {
-        padding: 16px;
-        margin-bottom: 12px;
-    }
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-card-lead {
-    display: block;
-}
-
-html.theme-harvard body.emsp-route-register .emsp-register-method-card-detail {
-    display: block;
-}
-
-@media (max-width: 991.98px) {
-    html.theme-harvard body.emsp-route-register .emsp-register-banner {
-        display: none !important;
-    }
-}
 /* ============================================================
    Compact journal carousel on homepage
    ============================================================ */
@@ -2966,15 +2279,17 @@ input[type="file"] {
 .emsp-doc-inline-preview .emsp-pdf-preview-wrap .emsp-doc-preview-frame {
   width: 100%;
   flex: 1;
-  min-height: clamp(14rem, 58dvh, 40rem);
+  min-height: clamp(18rem, 70vh, 52rem);
   max-height: none;
+  height: 100%;
   border: 0;
 }
 
 .emsp-doc-preview-modal .emsp-pdf-preview-wrap .emsp-doc-preview-frame {
-  min-height: clamp(18rem, 72dvh, 58rem);
+  min-height: 0;
   max-height: none;
   height: 100%;
+  flex: 1;
 }
 
 /* Document viewer content should never impose a desktop canvas width. */
@@ -3173,13 +2488,17 @@ input[type="file"] {
    The admin area now uses the same EMSP visual language as the public app.
    ======================================================================== */
 .emsp-admin-body {
-    min-height: 100vh;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
     background: #f5f8f6;
     color: var(--emsp-text-primary);
 }
 
 .emsp-admin-shell {
-    min-height: 100vh;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
     display: flex;
     align-items: stretch;
 }
@@ -3187,10 +2506,12 @@ input[type="file"] {
 .emsp-admin-sidebar {
     width: 268px;
     flex: 0 0 268px;
-    min-height: 100vh;
-    position: sticky;
-    top: 0;
-    align-self: flex-start;
+    height: 100dvh;
+    max-height: 100dvh;
+    position: relative;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding: 1.25rem .9rem;
     background: linear-gradient(180deg, #073c2a 0%, #052f22 100%);
     color: #f5fbf7;
@@ -3284,9 +2605,14 @@ input[type="file"] {
 .emsp-admin-main {
     min-width: 0;
     flex: 1 1 auto;
-    padding: 0 1.5rem 2rem;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0 1.5rem 0;
 }
 .emsp-admin-topbar {
+    flex-shrink: 0;
     min-height: 76px;
     display: flex;
     align-items: center;
@@ -3312,7 +2638,19 @@ input[type="file"] {
     font-weight: 700;
 }
 .emsp-admin-back:hover { border-color: rgba(0,107,60,.28); background: var(--emsp-color-primary-light); }
-.emsp-admin-content { min-width: 0; max-width: 1480px; margin: 0 auto; }
+.emsp-admin-content {
+    min-width: 0;
+    width: 100%;
+    max-width: 1480px;
+    margin: 0 auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2rem;
+}
 .emsp-admin-content .card { border-radius: 16px; box-shadow: 0 10px 30px rgba(17,40,74,.055); }
 .emsp-admin-content .card-header { border-bottom-color: var(--emsp-border-color); }
 .emsp-admin-content .table-responsive { border-radius: 14px; }
@@ -3326,7 +2664,13 @@ input[type="file"] {
 }
 
 @media (max-width: 991.98px) {
-    .emsp-admin-shell { display: block; position: relative; }
+    .emsp-admin-shell {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        height: 100dvh;
+        overflow: hidden;
+    }
     .emsp-admin-menu-toggle { display: inline-flex; }
     .emsp-admin-sidebar {
         position: fixed;
@@ -3336,7 +2680,9 @@ input[type="file"] {
         width: min(18.5rem, 88vw);
         height: 100dvh;
         min-height: 100dvh;
+        max-height: 100dvh;
         overflow-y: auto;
+        overscroll-behavior: contain;
         padding: 1.25rem .9rem;
         transform: translateX(-105%);
         transition: transform .24s ease;
@@ -3344,8 +2690,17 @@ input[type="file"] {
     }
     body.emsp-admin-nav-open .emsp-admin-sidebar { transform: translateX(0); }
     body.emsp-admin-nav-open { overflow: hidden; touch-action: none; }
+    body.emsp-admin-nav-open .emsp-admin-content { overflow: hidden; }
     .emsp-admin-sidebar .nav { display: flex; flex-direction: column; }
-    .emsp-admin-main { padding: 0 1rem 1.5rem; min-width: 0; }
+    .emsp-admin-main {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 0 1rem 0;
+        min-width: 0;
+    }
     .emsp-admin-topbar { flex-wrap: wrap; gap: .75rem; }
     .emsp-admin-back span { display: inline; }
 }
@@ -3580,6 +2935,11 @@ body.modal-open {
 
 .emsp-doc-preview-modal .modal-content {
     max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 1rem);
+}
+
+.docs-quickview-modal .modal-content {
+    max-height: none;
+    height: 100%;
 }
 
 .concours-preview-modal .modal-dialog,
@@ -4026,7 +3386,6 @@ html {
     }
 
     .concours-preview-modal .modal-dialog,
-    .emsp-login-modal .modal-dialog,
     .emsp-doc-preview-modal .emsp-doc-preview-dialog {
         width: calc(100% - .25rem);
         height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - .25rem);
@@ -4034,11 +3393,24 @@ html {
         margin: .125rem auto;
     }
 
+    .emsp-login-modal .modal-dialog {
+        width: min(calc(100% - 1rem), 100%);
+        height: auto;
+        max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 1rem);
+        margin: max(.5rem, env(safe-area-inset-top, 0px)) auto max(.5rem, env(safe-area-inset-bottom, 0px));
+    }
+
     .concours-preview-modal .modal-content,
-    .emsp-login-modal .modal-content,
     .emsp-doc-preview-modal .modal-content {
         height: 100%;
         border-radius: .75rem;
+    }
+
+    .emsp-login-modal .modal-content {
+        height: auto;
+        max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 1rem);
+        overflow-y: auto;
+        border-radius: var(--emsp-auth-form-surface-radius, 1rem);
     }
 
     .concours-preview-body {
@@ -4414,13 +3786,15 @@ body:not(.emsp-admin-body) .home-vitrine-link:hover {
 /* ============================================================
    LOT 17 — Flash toasts + motion polish (cache 20260812l)
    ============================================================ */
+#emsp-flash-root,
 #flash-container {
     top: calc(var(--total-top-offset, 80px) + env(safe-area-inset-top, 0px) + 10px);
     right: max(1rem, env(safe-area-inset-right, 0px));
 }
 
 @media (max-width: 576px) {
-    #flash-container {
+    #emsp-flash-root,
+#flash-container {
         left: max(.75rem, env(safe-area-inset-left, 0px));
         right: max(.75rem, env(safe-area-inset-right, 0px));
         max-width: none;
@@ -4482,7 +3856,7 @@ html {
 }
 
 .emsp-site-footer__brand strong {
-    font-family: var(--font-display, 'Canela Deck Web', Georgia, serif);
+    font-family: var(--font-display, 'Plus Jakarta Sans', Georgia, serif);
     font-weight: 400;
     letter-spacing: -.02em;
 }
@@ -4744,24 +4118,6 @@ html {
     .emsp-mobile-bottom-nav__item.is-touch-active {
         background: rgba(0, 107, 60, 0.08);
         transform: scale(0.97);
-    }
-
-    /* Pages auth — pleine largeur */
-    .emsp-register-page,
-    .emsp-login-page {
-        padding-inline: 0 !important;
-    }
-
-    .emsp-register-page .emsp-container-narrow,
-    .emsp-login-page .emsp-container-narrow {
-        max-width: none;
-        padding-inline: max(1rem, env(safe-area-inset-left, 0px)) max(1rem, env(safe-area-inset-right, 0px));
-    }
-
-    .emsp-register-intro,
-    .emsp-register-form .emsp-form-section {
-        border-radius: 0 !important;
-        box-shadow: none !important;
     }
 
     .emsp-verification-option {
@@ -5070,9 +4426,9 @@ html {
         margin-bottom: calc(var(--emsp-mobile-nav-height, 64px) + env(safe-area-inset-bottom, 0px));
     }
 
-    /* Typographie mobile — pile système + GT America si chargée */
+    /* Typographie mobile — Inter + pile système */
     body {
-        font-family: "GT America Standard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         font-size: 16px;
         line-height: 1.5;
         -webkit-text-size-adjust: 100%;
@@ -5304,10 +4660,14 @@ html {
 
 @media (max-width: 991.98px) {
     body.emsp-admin-mobile-enabled.emsp-admin-bottom-nav-enabled {
-        padding-bottom: calc(var(--emsp-admin-nav-height) + env(safe-area-inset-bottom, 0px));
+        padding-bottom: 0;
     }
 
     body.emsp-admin-mobile-enabled .emsp-admin-main {
+        padding-bottom: 0;
+    }
+
+    body.emsp-admin-mobile-enabled.emsp-admin-bottom-nav-enabled .emsp-admin-content {
         padding-bottom: calc(var(--emsp-admin-nav-height) + env(safe-area-inset-bottom, 0px) + .75rem);
     }
 
@@ -5616,7 +4976,8 @@ html {
     }
 
     /* Pagination touch-friendly */
-    .emsp-admin-content .pagination {
+    .emsp-admin-content .pagination,
+    .emsp-admin-content .emsp-pagination-bar .pagination {
         flex-wrap: wrap;
         gap: .35rem;
         justify-content: center;
@@ -5629,6 +4990,11 @@ html {
         align-items: center;
         justify-content: center;
         border-radius: 999px;
+    }
+
+    .emsp-admin-content .emsp-pagination-summary strong {
+        color: var(--emsp-green, #086136);
+        font-weight: 600;
     }
 
     /* Empty states */
@@ -6355,5 +5721,152 @@ html {
 
     body.emsp-admin-mobile-enabled .emsp-admin-back {
         order: 3;
+    }
+}
+
+/* ============================================================
+   Formations — contraste boutons WCAG AA (cache 20260813zo)
+   Scope: body.emsp-route-formations + .emsp-formations-page
+   Corrige .formation-card a (theme) qui écrase .btn-emsp.
+   ============================================================ */
+body.emsp-route-formations .formation-card-actions a.btn-emsp,
+.emsp-formations-page .formation-card-actions a.btn-emsp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    margin-top: 0;
+    padding: .5rem 1rem;
+    background: #006B3C !important;
+    border: 1px solid #006B3C !important;
+    color: #fff !important;
+    font-weight: 700;
+    font-size: .88rem;
+    text-decoration: none !important;
+    border-radius: var(--emsp-radius-sm, 4px);
+    box-shadow: 0 2px 6px rgba(0, 43, 24, .12);
+}
+
+body.emsp-route-formations .formation-card-actions a.btn-emsp:hover,
+body.emsp-route-formations .formation-card-actions a.btn-emsp:focus-visible,
+.emsp-formations-page .formation-card-actions a.btn-emsp:hover,
+.emsp-formations-page .formation-card-actions a.btn-emsp:focus-visible {
+    background: #C89416 !important;
+    border-color: #C89416 !important;
+    color: #1D1808 !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 12px rgba(200, 148, 22, .28);
+}
+
+body.emsp-route-formations .formation-card-actions .btn-emsp-outline,
+.emsp-formations-page .formation-card-actions .btn-emsp-outline {
+    background: #FAF8F4 !important;
+    border: 1.5px solid #006B3C !important;
+    color: #006B3C !important;
+    font-weight: 700;
+}
+
+body.emsp-route-formations .formation-card-actions .btn-emsp-outline:hover,
+body.emsp-route-formations .formation-card-actions .btn-emsp-outline:focus-visible,
+.emsp-formations-page .formation-card-actions .btn-emsp-outline:hover,
+.emsp-formations-page .formation-card-actions .btn-emsp-outline:focus-visible {
+    background: #006B3C !important;
+    border-color: #006B3C !important;
+    color: #fff !important;
+}
+
+body.emsp-route-formations .formations-hero-pill,
+.emsp-formations-page .formations-hero-pill {
+    background: rgba(255, 255, 255, .14) !important;
+    border: 1.5px solid rgba(245, 212, 122, .72) !important;
+    color: #fff !important;
+}
+
+body.emsp-route-formations a.formations-hero-pill:hover,
+body.emsp-route-formations a.formations-hero-pill:focus-visible,
+.emsp-formations-page a.formations-hero-pill:hover,
+.emsp-formations-page a.formations-hero-pill:focus-visible {
+    background: #C89416 !important;
+    border-color: #C89416 !important;
+    color: #1D1808 !important;
+}
+
+body.emsp-route-formations .formations-tronc-link,
+.emsp-formations-page .formations-tronc-link {
+    background: #FAF8F4 !important;
+    border: 1.5px solid #006B3C !important;
+    color: #006B3C !important;
+}
+
+body.emsp-route-formations .formations-tronc-link:hover,
+body.emsp-route-formations .formations-tronc-link:focus-visible,
+.emsp-formations-page .formations-tronc-link:hover,
+.emsp-formations-page .formations-tronc-link:focus-visible {
+    background: #006B3C !important;
+    border-color: #006B3C !important;
+    color: #fff !important;
+}
+
+@media (max-width: 767.98px) {
+    body.emsp-route-formations .formation-card-actions,
+    .emsp-formations-page .formation-card-actions {
+        flex-direction: column;
+    }
+
+    body.emsp-route-formations .formation-card-actions .btn,
+    .emsp-formations-page .formation-card-actions .btn {
+        width: 100%;
+        min-height: 48px;
+    }
+}
+
+/* ============================================================
+   LOT 64 — Admin scroll isolé · sidebar fixe · cache 20260813zw
+   La sidebar reste visible ; seul .emsp-admin-content défile.
+   ============================================================ */
+
+html:has(body.emsp-admin-body) {
+    height: 100%;
+    overflow: hidden;
+}
+
+.emsp-admin-content .table thead th,
+.emsp-admin-table-scroll .table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f0f5f1;
+    box-shadow: 0 1px 0 #e1e9e3;
+}
+
+.emsp-admin-table-scroll {
+    overflow-x: auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    max-height: min(70dvh, calc(100dvh - 12rem));
+    border-radius: 14px;
+}
+
+@media (max-width: 991.98px) {
+    body.emsp-admin-mobile-enabled .emsp-admin-topbar {
+        position: relative;
+        top: auto;
+    }
+}
+
+@media (min-width: 992px) {
+    .emsp-admin-sidebar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, .22) transparent;
+    }
+
+    .emsp-admin-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .emsp-admin-sidebar::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: rgba(255, 255, 255, .22);
     }
 }

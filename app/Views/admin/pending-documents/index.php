@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0 fw-bold"><i class="bi bi-hourglass-split me-2 text-warning"></i>Documents en attente
-        <span class="badge bg-warning text-dark ms-2"><?= count($docs) ?></span>
+        <span class="badge bg-warning text-dark ms-2"><?= (int) ($pagination['total'] ?? count($docs)) ?></span>
     </h5>
 </div>
 
@@ -46,6 +46,8 @@
         </table>
     </div>
 <?php endif; ?>
+
+<?php emsp_include_pagination($pagination ?? [], 'admin/validation-documents'); ?>
 
 <div class="modal fade emsp-admin-sheet-modal" id="reviewDocModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">

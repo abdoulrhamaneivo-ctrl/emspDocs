@@ -42,7 +42,19 @@ final class SchoolDomainRepository
     /** @return array<int, array<string, mixed>> */
     public function all(): array
     {
-        return $this->pdo->query('SELECT * FROM school_email_domains ORDER BY status DESC, domain ASC')->fetchAll();
+        [$rows] = $this->paginated(PHP_INT_MAX, 0);
+        return $rows;
+    }
+
+    /** @return array{0: array<int, array<string, mixed>>, 1: int} */
+    public function paginated(int $perPage, int $offset): array
+    {
+        $total = (int) $this->pdo->query('SELECT COUNT(*) FROM school_email_domains')->fetchColumn();
+        $stmt = $this->pdo->prepare('SELECT * FROM school_email_domains ORDER BY status DESC, domain ASC LIMIT :limit OFFSET :offset');
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return [$stmt->fetchAll(), $total];
     }
 
     public function add(string $domain): void

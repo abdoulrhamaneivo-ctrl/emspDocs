@@ -37,17 +37,24 @@ final class MediaController extends AdminController
         LegacyDb::mediaHelpers();
         $media = $this->repo($con);
         $filter = $this->normalizeFilter((string) ($_GET['filter'] ?? 'all'));
+        $perPage = emsp_per_page_from_request(25);
+        $pageNum = max(1, (int) ($_GET['page'] ?? 1));
 
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $this->handleIndexPost($media, $filter, (int) $adminUser['id']);
             return;
         }
 
+        [, $total] = $media->listPaginated($filter, 1, 0);
+        $pagination = emsp_paginate($total, $pageNum, $perPage);
+        [$items] = $media->listPaginated($filter, $pagination['perPage'], $pagination['offset']);
+
         $this->view('admin/media/index', [
-            'items' => $media->list($filter),
+            'items' => $items,
             'counters' => $media->counters(),
             'categories' => $media->categories(),
             'filter' => $filter,
+            'pagination' => $pagination,
         ]);
     }
 

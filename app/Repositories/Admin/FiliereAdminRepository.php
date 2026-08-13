@@ -51,8 +51,20 @@ final class FiliereAdminRepository
     /** @return array<int, array<string, mixed>> */
     public function all(): array
     {
-        $sql = 'SELECT ' . implode(', ', $this->selectColumns()) . ' FROM filieres ORDER BY name';
-        return $this->pdo->query($sql)->fetchAll();
+        [$rows] = $this->paginated(PHP_INT_MAX, 0);
+        return $rows;
+    }
+
+    /** @return array{0: array<int, array<string, mixed>>, 1: int} */
+    public function paginated(int $perPage, int $offset): array
+    {
+        $total = (int) $this->pdo->query('SELECT COUNT(*) FROM filieres')->fetchColumn();
+        $sql = 'SELECT ' . implode(', ', $this->selectColumns()) . ' FROM filieres ORDER BY name LIMIT :limit OFFSET :offset';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return [$stmt->fetchAll(), $total];
     }
 
     public function find(int $id): ?array

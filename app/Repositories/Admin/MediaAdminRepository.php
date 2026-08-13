@@ -124,6 +124,20 @@ final class MediaAdminRepository
     /** @return array<int, array<string, mixed>> */
     public function list(string $filter): array
     {
+        [$rows] = $this->listPaginated($filter, PHP_INT_MAX, 0);
+        return $rows;
+    }
+
+    /** @return array{0: array<int, array<string, mixed>>, 1: int} */
+    public function listPaginated(string $filter, int $perPage, int $offset): array
+    {
+        [$whereSql, $params] = $this->filterClause($filter);
+        $fromSql = 'FROM media m LEFT JOIN users u ON u.id = m.created_by LEFT JOIN media_categories mc ON mc.id = m.category_id';
+
+        $countStmt = $this->pdo->prepare("SELECT COUNT(*) $fromSql $whereSql");
+        $countStmt->execute($params);
+        $total = (int) $countStmt->fetchColumn();
+
         $orderCol = DatabaseHelper::columnExists($this->pdo, 'media', 'display_order')
             ? 'm.display_order DESC, m.created_at DESC, m.id DESC'
             : 'm.created_at DESC, m.id DESC';
@@ -131,26 +145,15 @@ final class MediaAdminRepository
         $sql = "SELECT m.id, m.title, m.description, m.type, m.file_path, m.poster_path, m.category, m.category_id,
                        m.is_public, m.status, m.created_at,
                        u.first_name, u.last_name, mc.name AS cat_name
-                FROM media m
-                LEFT JOIN users u ON u.id = m.created_by
-                LEFT JOIN media_categories mc ON mc.id = m.category_id";
-
-        $params = [];
-        if ($filter === 'image' || $filter === 'video') {
-            if ($filter === 'video') {
-                $sql .= " WHERE m.type IN ('video','lien')";
-            } else {
-                $sql .= ' WHERE m.type = :filter';
-                $params['filter'] = $filter;
-            }
-        } elseif ($filter === 'public' || $filter === 'private') {
-            $sql .= ' WHERE m.is_public = :filter';
-            $params['filter'] = $filter === 'public' ? 1 : 0;
-        }
-        $sql .= ' ORDER BY ' . $orderCol;
+                $fromSql $whereSql ORDER BY $orderCol LIMIT :limit OFFSET :offset";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
         $rows = $stmt->fetchAll();
 
         foreach ($rows as &$row) {
@@ -162,7 +165,26 @@ final class MediaAdminRepository
         }
         unset($row);
 
-        return $rows;
+        return [$rows, $total];
+    }
+
+    /** @return array{0: string, 1: array<string, mixed>} */
+    private function filterClause(string $filter): array
+    {
+        $params = [];
+        $whereSql = '';
+        if ($filter === 'image' || $filter === 'video') {
+            if ($filter === 'video') {
+                $whereSql = " WHERE m.type IN ('video','lien')";
+            } else {
+                $whereSql = ' WHERE m.type = :filter';
+                $params['filter'] = $filter;
+            }
+        } elseif ($filter === 'public' || $filter === 'private') {
+            $whereSql = ' WHERE m.is_public = :filter';
+            $params['filter'] = $filter === 'public' ? 1 : 0;
+        }
+        return [$whereSql, $params];
     }
 
     public function find(int $id): ?array

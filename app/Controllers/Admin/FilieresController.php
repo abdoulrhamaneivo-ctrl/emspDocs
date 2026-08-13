@@ -54,8 +54,15 @@ final class FilieresController extends AdminController
             }
         }
 
+        $perPage = emsp_per_page_from_request(25);
+        $pageNum = max(1, (int) ($_GET['page'] ?? 1));
+        [, $total] = $filieres->paginated(1, 0);
+        $pagination = emsp_paginate($total, $pageNum, $perPage);
+        [$items] = $filieres->paginated($pagination['perPage'], $pagination['offset']);
+
         $this->view('admin/filieres/index', [
-            'items' => $filieres->all(),
+            'items' => $items,
+            'pagination' => $pagination,
             'editorialEnabled' => $filieres->editorialEnabled(),
             'programColumnEnabled' => $filieres->programColumnEnabled(),
         ]);

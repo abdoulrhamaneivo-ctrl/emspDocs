@@ -24,6 +24,13 @@ final class TaxonomyRepository
     /** @return array<int, array<string, mixed>> */
     public function all(): array
     {
+        [$rows] = $this->paginated(PHP_INT_MAX, 0);
+        return $rows;
+    }
+
+    /** @return array{0: array<int, array<string, mixed>>, 1: int} */
+    public function paginated(int $perPage, int $offset): array
+    {
         $extraJoin = '';
         $extraSelect = '';
         if ($this->table === 'matieres') {
@@ -39,14 +46,21 @@ final class TaxonomyRepository
             ? ", $parentAlias.name AS parent_name"
             : ', NULL AS parent_name';
 
+        $fromSql = "FROM {$this->table} t $parentJoin $extraJoin";
+        $total = (int) $this->pdo->query("SELECT COUNT(*) $fromSql")->fetchColumn();
+
         $sql = "SELECT t.id, t.name, t.status $parentSelect $extraSelect
-                FROM {$this->table} t
-                $parentJoin
-                $extraJoin
-                ORDER BY t.name";
+                $fromSql
+                ORDER BY t.name
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         $rows = [];
-        foreach ($this->pdo->query($sql)->fetchAll() as $row) {
+        foreach ($stmt->fetchAll() as $row) {
             foreach (['name', 'parent_name', 'licence_name'] as $f) {
                 if (isset($row[$f]) && is_string($row[$f])) {
                     $row[$f] = emsp_fix_mojibake($row[$f]);
@@ -54,7 +68,7 @@ final class TaxonomyRepository
             }
             $rows[] = $row;
         }
-        return $rows;
+        return [$rows, $total];
     }
 
     public function find(int $id): ?array

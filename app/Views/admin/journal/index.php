@@ -1,10 +1,8 @@
 <?php
+$journalStats = is_array($journalStats ?? null) ? $journalStats : ['filtered' => count($articles), 'published' => 0, 'draft' => 0, 'open' => 0];
 $typeBadge = ['annonce' => 'bg-primary', 'defi' => 'bg-warning text-dark', 'sondage' => 'bg-success'];
 $typeLabel = ['annonce' => 'Annonce', 'defi' => 'Défi', 'sondage' => 'Sondage'];
 $stateBadge = ['draft' => 'bg-secondary', 'open' => 'bg-success', 'scheduled' => 'bg-info text-dark', 'closed' => 'bg-dark', 'expired' => 'bg-warning text-dark'];
-$totalPublished = count(array_filter($articles, static fn($a) => ($a['status'] ?? '') === 'published'));
-$totalDraft = count(array_filter($articles, static fn($a) => ($a['status'] ?? '') === 'draft'));
-$totalOpen = count(array_filter($articles, static fn($a) => ($a['state']['code'] ?? '') === 'open'));
 ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0 fw-bold"><i class="bi bi-newspaper me-2 text-primary"></i>Journal</h5>
@@ -12,10 +10,10 @@ $totalOpen = count(array_filter($articles, static fn($a) => ($a['state']['code']
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body py-3"><div class="fs-4 fw-bold"><?= count($articles) ?></div><div class="small text-muted">Filtrés</div></div></div></div>
-    <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body py-3"><div class="fs-4 fw-bold text-success"><?= $totalPublished ?></div><div class="small text-muted">Publiés</div></div></div></div>
-    <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body py-3"><div class="fs-4 fw-bold text-secondary"><?= $totalDraft ?></div><div class="small text-muted">Brouillons</div></div></div></div>
-    <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body py-3"><div class="fs-4 fw-bold text-info"><?= $totalOpen ?></div><div class="small text-muted">Ouverts</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body py-3"><div class="fs-4 fw-bold"><?= (int) ($journalStats['filtered'] ?? 0) ?></div><div class="small text-muted">Filtrés</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body py-3"><div class="fs-4 fw-bold text-success"><?= (int) ($journalStats['published'] ?? 0) ?></div><div class="small text-muted">Publiés</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body py-3"><div class="fs-4 fw-bold text-secondary"><?= (int) ($journalStats['draft'] ?? 0) ?></div><div class="small text-muted">Brouillons</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body py-3"><div class="fs-4 fw-bold text-info"><?= (int) ($journalStats['open'] ?? 0) ?></div><div class="small text-muted">Ouverts</div></div></div></div>
 </div>
 
 <div class="d-flex flex-wrap gap-2 mb-3">
@@ -94,3 +92,11 @@ $totalOpen = count(array_filter($articles, static fn($a) => ($a['state']['code']
         </table>
     </div>
 </div>
+
+<?php
+emsp_include_pagination($pagination ?? [], 'admin/journal', [
+    'type' => $typeFilter,
+    'status' => $statusFilter,
+    'state' => $stateFilter,
+]);
+?>

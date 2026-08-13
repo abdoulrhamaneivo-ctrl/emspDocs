@@ -18,11 +18,23 @@ final class PendingUsersController extends AdminController
             return;
         }
 
-        [$verified, $unverified] = $users->pendingUsers();
+        $perPage = emsp_per_page_from_request(25);
+        $pageVerified = max(1, (int) ($_GET['page'] ?? 1));
+        $pageUnverified = max(1, (int) ($_GET['page_uv'] ?? 1));
+
+        [, $totalVerified] = $users->pendingVerifiedPaginated(1, 0);
+        $paginationVerified = emsp_paginate($totalVerified, $pageVerified, $perPage);
+        [$verified] = $users->pendingVerifiedPaginated($paginationVerified['perPage'], $paginationVerified['offset']);
+
+        [, $totalUnverified] = $users->pendingUnverifiedPaginated(1, 0);
+        $paginationUnverified = emsp_paginate($totalUnverified, $pageUnverified, $perPage);
+        [$unverified] = $users->pendingUnverifiedPaginated($paginationUnverified['perPage'], $paginationUnverified['offset']);
 
         $this->view('admin/pending-users/index', [
             'pendingVerifiedUsers' => $verified,
             'pendingUnverifiedUsers' => $unverified,
+            'paginationVerified' => $paginationVerified,
+            'paginationUnverified' => $paginationUnverified,
         ]);
     }
 
@@ -55,23 +67,33 @@ final class PendingUsersController extends AdminController
 
         if ($action === 'approve') {
             $users->approve($userId);
-            $emailService->sendAccountApproved((int) $user['id'], (string) $user['email'], (string) $user['first_name'], (string) $user['last_name']);
+            $sent = $emailService->sendAccountApproved((int) $user['id'], (string) $user['email'], (string) $user['first_name'], (string) $user['last_name']);
+            if (!$sent) {
+                error_log('EMSP account approved email failed for user_id=' . $userId);
+            }
             try {
                 (new \App\Services\NotificationService())->notifyAccountApproved($userId);
             } catch (\Throwable $e) {
                 error_log('EMSP account approved notification failed: ' . $e->getMessage());
             }
             log_audit(\App\Core\Database::pdo(), $adminId, 'account_activated', 'user', $userId, (string) $user['email']);
-            flash('success', $studentName . ' peut maintenant se connecter et accéder à la plateforme. Un email de bienvenue lui a été envoyé.');
+            flash('success', $sent
+                ? $studentName . ' peut maintenant se connecter et accéder à la plateforme. Un email de bienvenue lui a été envoyé.'
+                : $studentName . ' peut maintenant se connecter, mais l\'email de notification n\'a pas pu être envoyé.');
         } elseif ($action === 'reject') {
             if ($motif === '') {
                 flash('warning', 'Veuillez indiquer un motif clair pour refuser cette inscription.');
                 redirect('admin/validation-comptes');
             }
             $users->reject($userId, $motif);
-            $emailService->sendAccountRejected((int) $user['id'], (string) $user['email'], (string) $user['first_name'], (string) $user['last_name'], $motif);
+            $sent = $emailService->sendAccountRejected((int) $user['id'], (string) $user['email'], (string) $user['first_name'], (string) $user['last_name'], $motif);
+            if (!$sent) {
+                error_log('EMSP account rejected email failed for user_id=' . $userId);
+            }
             log_audit(\App\Core\Database::pdo(), $adminId, 'account_rejected', 'user', $userId, $motif);
-            flash('warning', 'La demande de ' . $studentName . ' a été refusée avec le motif fourni. L\'étudiant a été notifié par email.');
+            flash('warning', $sent
+                ? 'La demande de ' . $studentName . ' a été refusée avec le motif fourni. L\'étudiant a été notifié par email.'
+                : 'La demande de ' . $studentName . ' a été refusée, mais l\'email de notification n\'a pas pu être envoyé.');
         }
 
         redirect('admin/validation-comptes');

@@ -25,7 +25,18 @@ final class UserAdminRepository
     /** @return array{0: array<int,array<string,mixed>>, 1: array<int,array<string,mixed>>} [vérifiés, non-vérifiés] */
     public function pendingUsers(): array
     {
-        $verifiedResult = $this->pdo->query("
+        [$verified] = $this->pendingVerifiedPaginated(PHP_INT_MAX, 0);
+        [$unverified] = $this->pendingUnverifiedPaginated(PHP_INT_MAX, 0);
+        return [$verified, $unverified];
+    }
+
+    /** @return array{0: array<int,array<string,mixed>>, 1: int} */
+    public function pendingVerifiedPaginated(int $perPage, int $offset): array
+    {
+        $where = "u.status='pending' AND (u.email_verified_at IS NOT NULL OR u.verification_token IS NULL OR u.verification_token = '')";
+        $total = (int) $this->pdo->query("SELECT COUNT(*) FROM users u WHERE $where")->fetchColumn();
+
+        $sql = "
             SELECT u.id, u.first_name, u.last_name, u.email,
                    u.created_at, u.email_verified_at, u.registration_method, u.verification_token,
                    u.student_card_path,
@@ -33,26 +44,45 @@ final class UserAdminRepository
             FROM users u
             LEFT JOIN filieres f ON f.id=u.filiere_id
             LEFT JOIN licences l ON l.id=u.licence_id
-            WHERE u.status='pending' AND (u.email_verified_at IS NOT NULL OR u.verification_token IS NULL OR u.verification_token = '')
-            ORDER BY u.created_at ASC");
+            WHERE $where
+            ORDER BY u.created_at ASC
+            LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         $verified = [];
-        foreach ($verifiedResult->fetchAll() as $row) {
+        foreach ($stmt->fetchAll() as $row) {
             $ts = !empty($row['created_at']) ? strtotime((string) $row['created_at']) : false;
             $row['created_label'] = $ts ? date('d/m/Y', $ts) : (string) ($row['created_at'] ?? '');
             $row['verified_label'] = !empty($row['email_verified_at']) ? (string) $row['email_verified_at'] : 'Confirmé';
             $verified[] = $row;
         }
 
-        $unverifiedResult = $this->pdo->query("
+        return [$verified, $total];
+    }
+
+    /** @return array{0: array<int,array<string,mixed>>, 1: int} */
+    public function pendingUnverifiedPaginated(int $perPage, int $offset): array
+    {
+        $where = "status='pending' AND (email_verified_at IS NULL AND (verification_token IS NOT NULL AND verification_token <> ''))";
+        $total = (int) $this->pdo->query("SELECT COUNT(*) FROM users WHERE $where")->fetchColumn();
+
+        $sql = "
             SELECT id, first_name, last_name, email, created_at, registration_method
             FROM users
-            WHERE status='pending' AND (email_verified_at IS NULL AND (verification_token IS NOT NULL AND verification_token <> ''))
-            ORDER BY created_at ASC");
+            WHERE $where
+            ORDER BY created_at ASC
+            LIMIT :limit OFFSET :offset";
 
-        $unverified = $unverifiedResult->fetchAll();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
 
-        return [$verified, $unverified];
+        return [$stmt->fetchAll(), $total];
     }
 
     public function approve(int $userId): void

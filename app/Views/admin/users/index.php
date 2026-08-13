@@ -102,14 +102,10 @@
     </div>
 </div>
 
-<?php if ($totalPages > 1): ?>
-    <nav class="mt-3">
-        <ul class="pagination justify-content-center">
-            <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-                <li class="page-item <?= $p === $pageNum ? 'active' : '' ?>">
-                    <a class="page-link" href="<?= url('admin/utilisateurs?' . http_build_query(array_merge($_GET, ['page' => $p]))) ?>"><?= $p ?></a>
-                </li>
-            <?php endfor; ?>
-        </ul>
-    </nav>
-<?php endif; ?>
+<?php
+emsp_include_pagination($pagination ?? emsp_paginate((int) $total, (int) $pageNum, 25), 'admin/utilisateurs', [
+    'q' => $search,
+    'role' => $filterRole,
+    'status' => $filterStatus,
+]);
+?>

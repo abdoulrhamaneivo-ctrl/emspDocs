@@ -25,7 +25,16 @@ final class SchoolDomainsController extends AdminController
             return;
         }
 
-        $this->view('admin/school-domains/index', ['domains' => $domains->all()]);
+        $perPage = emsp_per_page_from_request(25);
+        $pageNum = max(1, (int) ($_GET['page'] ?? 1));
+        [, $total] = $domains->paginated(1, 0);
+        $pagination = emsp_paginate($total, $pageNum, $perPage);
+        [$rows] = $domains->paginated($pagination['perPage'], $pagination['offset']);
+
+        $this->view('admin/school-domains/index', [
+            'domains' => $rows,
+            'pagination' => $pagination,
+        ]);
     }
 
     private function handlePost(SchoolDomainRepository $domains): void

@@ -37,10 +37,16 @@ final class JournalController extends AdminController
         $statusFilter = in_array(strtolower((string) ($_GET['status'] ?? '')), self::ALLOWED_STATUS, true) ? strtolower((string) $_GET['status']) : '';
         $stateFilter = in_array(strtolower((string) ($_GET['state'] ?? '')), self::ALLOWED_STATES, true) ? strtolower((string) $_GET['state']) : '';
 
-        $articles = $journal->list($typeFilter, $statusFilter, $stateFilter);
+        $perPage = emsp_per_page_from_request(25);
+        $pageNum = max(1, (int) ($_GET['page'] ?? 1));
+        [, $total, $journalStats] = $journal->listPaginated($typeFilter, $statusFilter, $stateFilter, 1, 0);
+        $pagination = emsp_paginate($total, $pageNum, $perPage);
+        [$articles, , $journalStats] = $journal->listPaginated($typeFilter, $statusFilter, $stateFilter, $pagination['perPage'], $pagination['offset']);
 
         $this->view('admin/journal/index', [
             'articles' => $articles,
+            'journalStats' => $journalStats,
+            'pagination' => $pagination,
             'typeFilter' => $typeFilter,
             'statusFilter' => $statusFilter,
             'stateFilter' => $stateFilter,

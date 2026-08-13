@@ -21,12 +21,12 @@ final class UsersController extends AdminController
         $role = trim((string) ($_GET['role'] ?? ''));
         $status = trim((string) ($_GET['status'] ?? ''));
         $search = trim((string) ($_GET['q'] ?? ''));
-        $perPage = 25;
+        $perPage = emsp_per_page_from_request(25);
         $pageNum = max(1, (int) ($_GET['page'] ?? 1));
 
-        [$rows, $total] = $users->filtered($role, $status, $search, $perPage, ($pageNum - 1) * $perPage);
-        $totalPages = max(1, (int) ceil($total / $perPage));
-        $pageNum = min($pageNum, $totalPages);
+        [, $total] = $users->filtered($role, $status, $search, 1, 0);
+        $pagination = emsp_paginate($total, $pageNum, $perPage);
+        [$rows] = $users->filtered($role, $status, $search, $pagination['perPage'], $pagination['offset']);
 
         $this->view('admin/users/index', [
             'users' => $rows,
@@ -34,8 +34,9 @@ final class UsersController extends AdminController
             'filterRole' => $role,
             'filterStatus' => $status,
             'search' => $search,
-            'pageNum' => $pageNum,
-            'totalPages' => $totalPages,
+            'pageNum' => $pagination['page'],
+            'totalPages' => $pagination['totalPages'],
+            'pagination' => $pagination,
             'adminUser' => $adminUser,
         ]);
     }

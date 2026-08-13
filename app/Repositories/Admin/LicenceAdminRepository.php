@@ -16,15 +16,28 @@ final class LicenceAdminRepository
     /** @return array<int, array<string, mixed>> */
     public function all(): array
     {
+        [$rows] = $this->paginated(PHP_INT_MAX, 0);
+        return $rows;
+    }
+
+    /** @return array{0: array<int, array<string, mixed>>, 1: int} */
+    public function paginated(int $perPage, int $offset): array
+    {
+        $total = (int) $this->pdo->query('SELECT COUNT(*) FROM licences')->fetchColumn();
         $sql = "SELECT l.id, l.name, l.status,
                        GROUP_CONCAT(f.name ORDER BY f.name SEPARATOR ', ') AS filiere_names
                 FROM licences l
                 LEFT JOIN licence_filieres lf ON lf.licence_id = l.id
                 LEFT JOIN filieres f ON f.id = lf.filiere_id
                 GROUP BY l.id, l.name, l.status
-                ORDER BY l.name";
+                ORDER BY l.name
+                LIMIT :limit OFFSET :offset";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
         $rows = [];
-        foreach ($this->pdo->query($sql)->fetchAll() as $row) {
+        foreach ($stmt->fetchAll() as $row) {
             foreach (['name', 'filiere_names'] as $f) {
                 if (isset($row[$f]) && is_string($row[$f])) {
                     $row[$f] = emsp_fix_mojibake($row[$f]);
@@ -32,7 +45,7 @@ final class LicenceAdminRepository
             }
             $rows[] = $row;
         }
-        return $rows;
+        return [$rows, $total];
     }
 
     public function find(int $id): ?array

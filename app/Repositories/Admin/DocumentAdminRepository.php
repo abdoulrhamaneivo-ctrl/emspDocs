@@ -18,6 +18,15 @@ final class DocumentAdminRepository
     /** @return array<int, array<string, mixed>> */
     public function pendingList(): array
     {
+        [$docs] = $this->pendingListPaginated(PHP_INT_MAX, 0);
+        return $docs;
+    }
+
+    /** @return array{0: array<int, array<string, mixed>>, 1: int} */
+    public function pendingListPaginated(int $perPage, int $offset): array
+    {
+        $total = (int) $this->pdo->query("SELECT COUNT(*) FROM documents WHERE status='pending'")->fetchColumn();
+
         $pendingMatiereEnabled = DatabaseHelper::pendingMatiereEnabled($this->pdo);
         $matiereLabelSelect = $pendingMatiereEnabled ? 'd.matiere_label_pending,' : 'NULL AS matiere_label_pending,';
 
@@ -30,9 +39,16 @@ final class DocumentAdminRepository
                 LEFT JOIN licences l ON l.id = d.licence_id
                 LEFT JOIN matieres ma ON ma.id = d.matiere_id
                 WHERE d.status='pending'
-                ORDER BY d.created_at ASC";
+                ORDER BY d.created_at ASC
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
         $docs = [];
-        foreach ($this->pdo->query($sql)->fetchAll() as $row) {
+        foreach ($stmt->fetchAll() as $row) {
             foreach (['title', 'description', 'first_name', 'last_name', 'email', 'licence_name', 'matiere_name', 'matiere_label_pending'] as $field) {
                 if (isset($row[$field]) && is_string($row[$field])) {
                     $row[$field] = emsp_fix_mojibake($row[$field]);
@@ -54,7 +70,7 @@ final class DocumentAdminRepository
         }
         unset($d);
 
-        return $docs;
+        return [$docs, $total];
     }
 
     /** @return array<int, array{id:int, name:string}> */

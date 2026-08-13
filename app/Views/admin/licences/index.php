@@ -39,3 +39,5 @@
         </table>
     </div>
 </div>
+
+<?php emsp_include_pagination($pagination ?? [], 'admin/licences'); ?>

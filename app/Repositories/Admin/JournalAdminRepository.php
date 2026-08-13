@@ -34,6 +34,62 @@ final class JournalAdminRepository
     /** @return array<int, array<string, mixed>> */
     public function list(string $typeFilter, string $statusFilter, string $stateFilter): array
     {
+        [$articles] = $this->listPaginated($typeFilter, $statusFilter, $stateFilter, PHP_INT_MAX, 0);
+        return $articles;
+    }
+
+    /**
+     * @return array{0: array<int, array<string, mixed>>, 1: int, 2: array{filtered:int,published:int,draft:int,open:int}}
+     */
+    public function listPaginated(string $typeFilter, string $statusFilter, string $stateFilter, int $perPage, int $offset): array
+    {
+        $rows = $this->fetchFilteredRows($typeFilter, $statusFilter);
+        $articles = [];
+        foreach ($rows as $row) {
+            $row['state'] = emsp_journal_state($row);
+            $row['excerpt'] = emsp_journal_excerpt((string) ($row['content'] ?? ''), 120);
+            $row['author_label'] = $this->authorColumn !== ''
+                ? trim(((string) ($row['first_name'] ?? '')) . ' ' . ((string) ($row['last_name'] ?? '')))
+                : '';
+            if ($stateFilter !== '' && (($row['state']['code'] ?? '') !== $stateFilter)) {
+                continue;
+            }
+            $articles[] = $row;
+        }
+
+        $stats = $this->computeStatsFromRows($rows, $stateFilter);
+        $total = count($articles);
+        $pageItems = array_slice($articles, $offset, $perPage);
+
+        return [$pageItems, $total, $stats];
+    }
+
+    /** @return array{filtered:int,published:int,draft:int,open:int} */
+    private function computeStatsFromRows(array $rows, string $stateFilter): array
+    {
+        $stats = ['filtered' => 0, 'published' => 0, 'draft' => 0, 'open' => 0];
+        foreach ($rows as $row) {
+            $row['state'] = emsp_journal_state($row);
+            if ($stateFilter !== '' && (($row['state']['code'] ?? '') !== $stateFilter)) {
+                continue;
+            }
+            $stats['filtered']++;
+            if (($row['status'] ?? '') === 'published') {
+                $stats['published']++;
+            }
+            if (($row['status'] ?? '') === 'draft') {
+                $stats['draft']++;
+            }
+            if (($row['state']['code'] ?? '') === 'open') {
+                $stats['open']++;
+            }
+        }
+        return $stats;
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    private function fetchFilteredRows(string $typeFilter, string $statusFilter): array
+    {
         $selectTiming = $this->hasLifecycle ? 'j.starts_at, j.ends_at' : 'NULL AS starts_at, NULL AS ends_at';
         $selectClosed = $this->hasClosedAt ? 'j.closed_at' : 'NULL AS closed_at';
         $selectAuthor = $this->authorColumn !== '' ? ', u.first_name, u.last_name' : '';
@@ -58,22 +114,7 @@ final class JournalAdminRepository
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
-        $rows = $stmt->fetchAll();
-
-        $articles = [];
-        foreach ($rows as $row) {
-            $row['state'] = emsp_journal_state($row);
-            $row['excerpt'] = emsp_journal_excerpt((string) ($row['content'] ?? ''), 120);
-            $row['author_label'] = $this->authorColumn !== ''
-                ? trim(((string) ($row['first_name'] ?? '')) . ' ' . ((string) ($row['last_name'] ?? '')))
-                : '';
-            if ($stateFilter !== '' && (($row['state']['code'] ?? '') !== $stateFilter)) {
-                continue;
-            }
-            $articles[] = $row;
-        }
-
-        return $articles;
+        return $stmt->fetchAll();
     }
 
     public function findForEdit(int $id): ?array

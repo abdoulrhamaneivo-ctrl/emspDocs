@@ -28,8 +28,8 @@ final class CommentModerationController extends AdminController
         if ($source !== '' && !isset(self::SOURCE_LABELS[$source])) {
             $source = '';
         }
+        $perPage = emsp_per_page_from_request(20);
         $pageNum = max(1, (int) ($_GET['page'] ?? 1));
-        $perPage = 20;
 
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action'], $_POST['item_id'], $_POST['source_type'])) {
             if (!verify_csrf($_POST['csrf_token'] ?? null)) {
@@ -42,9 +42,9 @@ final class CommentModerationController extends AdminController
             redirect('admin/moderation-commentaires?' . http_build_query(['status' => $status, 'source' => $source, 'page' => $pageNum]));
         }
 
-        [$items, $total, $sourceCounts] = $repo->list($status, $source, $perPage, ($pageNum - 1) * $perPage);
-        $totalPages = max(1, (int) ceil($total / $perPage));
-        $pageNum = min($pageNum, $totalPages);
+        [, $total] = $repo->list($status, $source, 1, 0);
+        $pagination = emsp_paginate($total, $pageNum, $perPage);
+        [$items, , $sourceCounts] = $repo->list($status, $source, $pagination['perPage'], $pagination['offset']);
 
         $this->view('admin/moderation/comments', [
             'items' => $items,
@@ -53,8 +53,9 @@ final class CommentModerationController extends AdminController
             'sourceLabels' => self::SOURCE_LABELS,
             'fStatus' => $status,
             'fSource' => $source,
-            'pageNum' => $pageNum,
-            'totalPages' => $totalPages,
+            'pageNum' => $pagination['page'],
+            'totalPages' => $pagination['totalPages'],
+            'pagination' => $pagination,
         ]);
     }
 }

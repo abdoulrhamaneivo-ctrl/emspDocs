@@ -1,5 +1,9 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0 fw-bold"><i class="bi bi-person-check me-2 text-warning"></i> Comptes en attente (email vérifié)</h5>
+    <h5 class="mb-0 fw-bold"><i class="bi bi-person-check me-2 text-warning"></i> Comptes en attente (email vérifié)
+        <?php if (!empty($paginationVerified['total'])): ?>
+            <span class="badge bg-warning text-dark ms-1"><?= (int) $paginationVerified['total'] ?></span>
+        <?php endif; ?>
+    </h5>
 </div>
 
 <?php if (empty($pendingVerifiedUsers)): ?>
@@ -20,7 +24,7 @@
                     <tr>
                         <td><?= h($u['first_name'] . ' ' . $u['last_name']) ?></td>
                         <td><?= h($u['email']) ?></td>
-                        <td><?= h($u['filiere_name'] ?? '-') ?> / <?= h($u['licence_name'] ?? '-') ?></td>
+                        <td><?= h(emsp_user_filiere_label($u['filiere_name'] ?? null)) ?> / <?= h($u['licence_name'] ?? '-') ?></td>
                         <td><?= h((string) $u['created_at']) ?></td>
                         <td><span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i><?= h($u['verified_label']) ?></span></td>
                         <td>
@@ -42,7 +46,7 @@
                                             data-prenom="<?= h($u['first_name'] ?? '') ?>"
                                             data-nom="<?= h($u['last_name'] ?? '') ?>"
                                             data-email="<?= h($u['email'] ?? '') ?>"
-                                            data-filiere="<?= h($u['filiere_name'] ?? '-') ?>"
+                                            data-filiere="<?= h(emsp_user_filiere_label($u['filiere_name'] ?? null)) ?>"
                                             data-licence="<?= h($u['licence_name'] ?? '-') ?>"
                                             data-date="<?= h($u['created_label'] !== '' ? $u['created_label'] : '-') ?>">
                                         Voir carte
@@ -58,6 +62,10 @@
         </table>
     </div>
 <?php endif; ?>
+
+<?php
+emsp_include_pagination($paginationVerified ?? [], 'admin/validation-comptes', [], 'page');
+?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0 fw-bold"><i class="bi bi-envelope-paper me-2 text-secondary"></i> Emails non vérifiés</h5>
@@ -85,6 +93,12 @@
         </table>
     </div>
 <?php endif; ?>
+
+<?php
+emsp_include_pagination($paginationUnverified ?? [], 'admin/validation-comptes', [
+    'page' => (int) ($paginationVerified['page'] ?? ($_GET['page'] ?? 1)),
+], 'page_uv');
+?>
 
 <!-- Modale carte étudiante -->
 <div class="modal fade emsp-user-card-modal emsp-admin-sheet-modal" id="modalCarte" tabindex="-1" aria-hidden="true">

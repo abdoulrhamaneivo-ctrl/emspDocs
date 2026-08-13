@@ -20,9 +20,16 @@ final class PendingDocumentsController extends AdminController
             return;
         }
 
+        $perPage = emsp_per_page_from_request(25);
+        $pageNum = max(1, (int) ($_GET['page'] ?? 1));
+        [, $total] = $documents->pendingListPaginated(1, 0);
+        $pagination = emsp_paginate($total, $pageNum, $perPage);
+        [$docs] = $documents->pendingListPaginated($pagination['perPage'], $pagination['offset']);
+
         $this->view('admin/pending-documents/index', [
-            'docs' => $documents->pendingList(),
+            'docs' => $docs,
             'availableMatieres' => $documents->activeMatieres(),
+            'pagination' => $pagination,
         ]);
     }
 

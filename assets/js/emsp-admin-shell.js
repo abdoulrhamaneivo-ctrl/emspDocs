@@ -227,14 +227,15 @@
 
         function enhanceStickyTopbar() {
             var topbar = document.querySelector('.emsp-admin-topbar');
-            if (!topbar) {
+            var scrollRoot = document.querySelector('.emsp-admin-content');
+            if (!topbar || !scrollRoot) {
                 return;
             }
             var update = function () {
-                topbar.classList.toggle('is-scrolled', window.scrollY > 8);
+                topbar.classList.toggle('is-scrolled', scrollRoot.scrollTop > 8);
             };
             update();
-            window.addEventListener('scroll', update, { passive: true });
+            scrollRoot.addEventListener('scroll', update, { passive: true });
         }
 
         function enhancePageToolbars() {

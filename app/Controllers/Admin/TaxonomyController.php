@@ -33,9 +33,16 @@ final class TaxonomyController extends AdminController
             return;
         }
 
+        $perPage = emsp_per_page_from_request(25);
+        $pageNum = max(1, (int) ($_GET['page'] ?? 1));
+        [, $total] = $repo->paginated(1, 0);
+        $pagination = emsp_paginate($total, $pageNum, $perPage);
+        [$items] = $repo->paginated($pagination['perPage'], $pagination['offset']);
+
         $this->view('admin/taxonomy/index', [
             'config' => $config,
-            'items' => $repo->all(),
+            'items' => $items,
+            'pagination' => $pagination,
         ]);
     }
 

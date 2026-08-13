@@ -26,7 +26,13 @@ final class LicencesController extends AdminController
             redirect('admin/licences');
         }
 
-        $this->view('admin/licences/index', ['items' => $licences->all()]);
+        $perPage = emsp_per_page_from_request(25);
+        $pageNum = max(1, (int) ($_GET['page'] ?? 1));
+        [, $total] = $licences->paginated(1, 0);
+        $pagination = emsp_paginate($total, $pageNum, $perPage);
+        [$items] = $licences->paginated($pagination['perPage'], $pagination['offset']);
+
+        $this->view('admin/licences/index', ['items' => $items, 'pagination' => $pagination]);
     }
 
     public function form(): void
