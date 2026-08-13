@@ -25,9 +25,14 @@ final class AuthController extends Controller
     public function login(): void
     {
         $con = LegacyDb::mysqli();
+        $wantsJson = $this->wantsJsonRequest();
 
         if (!verify_csrf($_POST['csrf_token'] ?? null)) {
-            flash('danger', 'Token de sécurité invalide.');
+            $message = 'Token de sécurité invalide.';
+            if ($wantsJson) {
+                $this->loginJsonResponse(false, $message, null, 403);
+            }
+            flash('danger', $message);
             redirect('login');
         }
 
@@ -37,13 +42,21 @@ final class AuthController extends Controller
 
         $rate = rate_limit_check($ip, $con);
         if (!empty($rate['blocked'])) {
-            flash('warning', $this->rateLimitMessage((int) ($rate['retry_in'] ?? 0)));
+            $message = $this->rateLimitMessage((int) ($rate['retry_in'] ?? 0));
+            if ($wantsJson) {
+                $this->loginJsonResponse(false, $message, null, 429);
+            }
+            flash('warning', $message);
             redirect('login');
         }
 
         if ($email === '' || $password === '') {
             rate_limit_record_failure($ip, $con);
-            flash('danger', 'Email et mot de passe sont obligatoires pour se connecter.');
+            $message = 'Email et mot de passe sont obligatoires pour se connecter.';
+            if ($wantsJson) {
+                $this->loginJsonResponse(false, $message, null, 422);
+            }
+            flash('danger', $message);
             redirect('login');
         }
 
@@ -52,7 +65,11 @@ final class AuthController extends Controller
 
         if (!$user || !password_verify($password, $user['password_hash'])) {
             rate_limit_record_failure($ip, $con);
-            flash('danger', 'Adresse email ou mot de passe incorrect. Vous pouvez réinitialiser votre mot de passe.');
+            $message = 'Adresse email ou mot de passe incorrect. Vous pouvez réinitialiser votre mot de passe.';
+            if ($wantsJson) {
+                $this->loginJsonResponse(false, $message, null, 422);
+            }
+            flash('danger', $message);
             redirect('login');
         }
 
@@ -64,22 +81,37 @@ final class AuthController extends Controller
             emsp_session_sync_auth_user($user);
             emsp_session_set_notif_count(0);
             emsp_session_set_notif_sections(['journal' => 0, 'media' => 0]);
+            if ($wantsJson) {
+                $this->loginJsonResponse(true, null, url('pending-status'));
+            }
             redirect('pending-status');
         }
 
         if ($user['status'] === 'rejected') {
             $reason = $user['rejection_reason'] ? ' Motif : ' . $user['rejection_reason'] : '';
-            flash('danger', "Votre demande d'inscription a été refusée." . $reason . " Contactez l'administration si vous pensez qu'il s'agit d'une erreur.");
+            $message = "Votre demande d'inscription a été refusée." . $reason . " Contactez l'administration si vous pensez qu'il s'agit d'une erreur.";
+            if ($wantsJson) {
+                $this->loginJsonResponse(false, $message, null, 422);
+            }
+            flash('danger', $message);
             redirect('login');
         }
 
         if ($user['status'] === 'suspended') {
-            flash('danger', "Votre compte a été suspendu. Contactez l'administration pour plus d'informations.");
+            $message = "Votre compte a été suspendu. Contactez l'administration pour plus d'informations.";
+            if ($wantsJson) {
+                $this->loginJsonResponse(false, $message, null, 422);
+            }
+            flash('danger', $message);
             redirect('login');
         }
 
         if ($user['status'] !== 'active') {
-            flash('warning', "Votre compte n'est pas actif pour le moment. Contactez l'administration si besoin.");
+            $message = "Votre compte n'est pas actif pour le moment. Contactez l'administration si besoin.";
+            if ($wantsJson) {
+                $this->loginJsonResponse(false, $message, null, 422);
+            }
+            flash('warning', $message);
             redirect('login');
         }
 
@@ -95,17 +127,13 @@ final class AuthController extends Controller
 
         flash('success', 'Bon retour, ' . $user['first_name'] . ' !');
 
-        if (!empty($_SESSION['redirect_after_login'])) {
-            $target = $_SESSION['redirect_after_login'];
-            unset($_SESSION['redirect_after_login']);
-            header('Location: ' . $target);
-            exit;
+        $redirectTarget = $this->loginSuccessRedirect($user);
+        if ($wantsJson) {
+            $this->loginJsonResponse(true, null, $redirectTarget);
         }
 
-        if (in_array($user['role'], ['admin', 'moderateur'], true)) {
-            redirect('admin/validation-comptes');
-        }
-        redirect('dashboard');
+        header('Location: ' . $redirectTarget);
+        exit;
     }
 
     // ---------------------------------------------------------------
@@ -152,7 +180,9 @@ final class AuthController extends Controller
         $password = (string) ($_POST['password'] ?? '');
         $passwordConfirm = (string) ($_POST['password_confirm'] ?? '');
         $registrationMethod = trim((string) ($_POST['registration_method'] ?? ''));
-        $filiereId = (int) ($_POST['filiere_id'] ?? 0);
+        $filiereRaw = (string) ($_POST['filiere_id'] ?? '');
+        $isTroncCommun = $filiereRaw === (string) emsp_tronc_commun_filiere_value();
+        $filiereId = $isTroncCommun ? 0 : (int) $filiereRaw;
         $licenceId = (int) ($_POST['licence_id'] ?? 0);
 
         $schoolDomains = emsp_get_school_domains($con);
@@ -178,15 +208,15 @@ final class AuthController extends Controller
         if (!in_array($registrationMethod, ['school_email', 'manual_card'], true)) {
             $errors['registration_method'] = "Choisissez d'abord une méthode d'inscription.";
         }
-        if ($filiereId <= 0) {
-            $errors['filiere_id'] = 'Veuillez choisir une filière.';
+        if (!$isTroncCommun && $filiereId <= 0) {
+            $errors['filiere_id'] = 'Veuillez choisir une filière ou le tronc commun.';
         }
         if ($licenceId <= 0) {
             $errors['licence_id'] = 'Veuillez choisir un niveau.';
         }
 
         $academic = new AcademicRepository(Database::pdo());
-        if ($filiereId > 0 && !$academic->filiereIsActive($filiereId)) {
+        if (!$isTroncCommun && $filiereId > 0 && !$academic->filiereIsActive($filiereId)) {
             $errors['filiere_id'] = "Cette filière n'est pas disponible.";
         }
         if ($licenceId > 0 && !$academic->licenceIsActive($licenceId)) {
@@ -234,7 +264,7 @@ final class AuthController extends Controller
                 'password' => $password,
                 'registration_method' => $registrationMethod,
                 'student_card_path' => $studentCardPath,
-                'filiere_id' => $filiereId ?: null,
+                'filiere_id' => $isTroncCommun ? null : ($filiereId ?: null),
                 'licence_id' => $licenceId ?: null,
                 'token' => $token,
             ]);
@@ -260,11 +290,29 @@ final class AuthController extends Controller
         rate_limit_clear($ip, $con);
 
         $sent = brevo_send_verification($newUserId, $email, $firstName, $lastName, $token);
+        if (!$sent) {
+            error_log('EMSP register: verification email failed for user_id=' . $newUserId . ' email=' . $email);
+        } else {
+            $_SESSION['last_verification_email_sent_at'] = time();
+            $_SESSION['pending_last_resend_at'] = time();
+        }
+
+        $createdUser = $users->findByEmailForLogin($email);
+        if ($createdUser) {
+            session_regenerate_id(true);
+            emsp_session_sync_auth_user($createdUser);
+            emsp_session_set_notif_count(0);
+            emsp_session_set_notif_sections(['journal' => 0, 'media' => 0]);
+        }
 
         if (!$sent) {
-            flash('warning', "Inscription enregistrée, mais l'email de confirmation n'a pas pu être envoyé. Vous pourrez le renvoyer depuis la page de suivi.");
+            flash('warning', "Inscription enregistrée, mais l'email de confirmation n'a pas pu être envoyé. Vous pourrez le renvoyer depuis cette page.");
         } else {
             flash('success', "Inscription réussie ! Un email de confirmation a été envoyé à $email. Vérifiez vos spams si vous ne le trouvez pas.");
+        }
+
+        if ($createdUser) {
+            redirect('pending-status');
         }
 
         redirect('login');
@@ -391,7 +439,10 @@ final class AuthController extends Controller
         }
 
         if (brevo_recent_email_exists($con, $uid, 'verification', 5)) {
-            flash('warning', 'Veuillez patienter 5 minutes avant de renvoyer un email de confirmation.');
+            $emailService = new \App\Services\EmailService();
+            $retryIn = $emailService->resendCooldownSeconds($uid, 'verification', 5);
+            $mins = max(1, (int) ceil($retryIn / 60));
+            flash('warning', 'Veuillez patienter ' . $mins . ' minute' . ($mins > 1 ? 's' : '') . ' avant de renvoyer un email de confirmation.');
             header('Location: ' . url('pending-status'));
             exit;
         }
@@ -400,9 +451,12 @@ final class AuthController extends Controller
         $users->setVerificationToken($uid, $token);
 
         if (brevo_send_verification($uid, $user['email'], $user['first_name'], $user['last_name'], $token)) {
+            $_SESSION['last_verification_email_sent_at'] = time();
+            $_SESSION['pending_last_resend_at'] = time();
             flash('success', 'Un nouvel email de confirmation vient d\'être envoyé. Vérifiez votre boîte mail et vos spams.');
         } else {
-            flash('danger', 'Le mail de confirmation n\'a pas pu être envoyé pour le moment. Réessayez dans quelques minutes.');
+            error_log('EMSP resend-verification: Brevo send failed for user_id=' . $uid . ' email=' . ($user['email'] ?? ''));
+            flash('danger', 'Impossible d\'envoyer l\'email pour le moment. Réessayez dans quelques minutes.');
         }
         header('Location: ' . url('pending-status'));
         exit;
@@ -625,6 +679,50 @@ final class AuthController extends Controller
             ? mb_substr($local, 0, 1) . str_repeat('*', max(1, mb_strlen($local) - 1))
             : mb_substr($local, 0, 1) . str_repeat('*', max(2, mb_strlen($local) - 2)) . mb_substr($local, -1);
         return $maskedLocal . '@' . $domain;
+    }
+
+    private function wantsJsonRequest(): bool
+    {
+        $accept = strtolower((string) ($_SERVER['HTTP_ACCEPT'] ?? ''));
+        if (str_contains($accept, 'application/json')) {
+            return true;
+        }
+
+        return strtolower((string) ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest';
+    }
+
+    /**
+     * @param bool $ok Succès ou échec
+     */
+    private function loginJsonResponse(bool $ok, ?string $message, ?string $redirect, int $status = 200): never
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        http_response_code($status);
+        $payload = ['ok' => $ok];
+        if ($message !== null && $message !== '') {
+            $payload['message'] = $message;
+        }
+        if ($redirect !== null && $redirect !== '') {
+            $payload['redirect'] = $redirect;
+        }
+        echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    /** URL absolue après connexion réussie (compte actif ou pending). */
+    private function loginSuccessRedirect(array $user): string
+    {
+        if (!empty($_SESSION['redirect_after_login'])) {
+            $target = (string) $_SESSION['redirect_after_login'];
+            unset($_SESSION['redirect_after_login']);
+            return $target;
+        }
+
+        if (in_array($user['role'] ?? '', ['admin', 'moderateur'], true)) {
+            return url('admin/validation-comptes');
+        }
+
+        return url('dashboard');
     }
 
     private function rateLimitMessage(int $retryIn): string

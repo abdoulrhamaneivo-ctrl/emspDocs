@@ -99,7 +99,7 @@ $breadcrumbLabel = trim((string) ($routeLabels[$currentPath] ?? ($page_title ?? 
 if ($breadcrumbLabel === '' || $breadcrumbLabel === 'Plateforme EMSP Docs') {
     $breadcrumbLabel = 'Page';
 }
-$showBreadcrumb = !in_array($currentPath, ['index.php', ''], true);
+$showBreadcrumb = !in_array($currentPath, ['index.php', '', 'login', 'register', 'forgot-password', 'reset-password'], true);
 
 $visitorDiscoverLinks = [
     ['label' => 'Institution', 'href' => 'institution', 'paths' => ['institution']],
@@ -166,27 +166,16 @@ $mobileAccountShortcutHref = $isActiveAccount ? 'mon-profil' : $accountHomeHref;
 $mobileChromeHiddenRoutes = function_exists('emsp_mobile_chrome_hidden_paths')
     ? emsp_mobile_chrome_hidden_paths()
     : [
-        'register',
-        'forgot-password',
-        'reset-password',
         'resend-verification',
-        'pending-status',
+        'verify-email',
     ];
-$authLandingRoutes = [
-    'login',
-    'register',
-    'forgot-password',
-    'reset-password',
-    'resend-verification',
-    'pending-status',
-];
 $showMobileSearch = $canSearchDocuments && !in_array($currentPath, $mobileChromeHiddenRoutes, true);
 $showMobileBottomNav = function_exists('emsp_should_show_mobile_bottom_nav')
     ? emsp_should_show_mobile_bottom_nav()
     : false;
-$hideGuestAuthButtons = in_array($currentPath, $authLandingRoutes, true);
-$showGuestLoginButton = !$hideGuestAuthButtons && $currentPath !== 'login';
-$showGuestRegisterButton = !$hideGuestAuthButtons && $currentPath !== 'register';
+$isProfileShellRoute = in_array($currentPath, ['mon-profil', 'profil-public'], true);
+$showGuestLoginButton = !$isAuth && $currentPath !== 'login';
+$showGuestRegisterButton = !$isAuth && $currentPath !== 'register';
 $loginModalEntryHref = $base . 'index.php?open_login=1';
 $currentFeedSection = in_array($currentPath, ['journal', 'article'], true)
     ? 'journal'
@@ -262,7 +251,7 @@ $topbarStaticMessage = !$isAuth
 $topbarStaticMessage = emsp_fix_mojibake($topbarStaticMessage);
 ?>
 
-<header class="site-header emsp-app-header">
+<header class="site-header emsp-app-header<?= $isProfileShellRoute ? ' emsp-site-header--profile-shell' : '' ?>">
     <div class="emsp-topbar">
         <div class="emsp-container emsp-topbar-track emsp-topbar-track--static" data-emsp-topbar>
             <span class="emsp-topbar-badge">
@@ -348,26 +337,24 @@ $topbarStaticMessage = emsp_fix_mojibake($topbarStaticMessage);
                                 <span class="emsp-btn-label-compact">Inscription</span>
                             </a>
                         <?php endif; ?>
-                        <?php if (!$hideGuestAuthButtons): ?>
-                            <?php if ($currentPath !== 'login'): ?>
-                                <a class="btn btn-sm emsp-icon-btn emsp-mobile-auth-shortcut d-none emsp-open-login-modal"
-                                   href="<?= h($loginModalEntryHref) ?>"
-                                   data-bs-toggle="modal"
-                                   data-bs-target="#emspQuickLoginModal"
-                                   data-emsp-modal-link="1"
-                                   aria-label="Connexion rapide"
-                                   title="Connexion">
-                                    <i class="bi bi-box-arrow-in-right"></i>
-                                </a>
-                            <?php endif; ?>
-                            <?php if ($currentPath !== 'register'): ?>
-                                <a class="btn btn-sm emsp-icon-btn emsp-mobile-auth-shortcut emsp-mobile-register-shortcut d-none"
-                                   href="<?= $base ?>register"
-                                   aria-label="Inscription rapide"
-                                   title="Inscription">
-                                    <i class="bi bi-person-plus-fill"></i>
-                                </a>
-                            <?php endif; ?>
+                        <?php if ($showGuestLoginButton): ?>
+                            <a class="btn btn-sm emsp-icon-btn emsp-mobile-auth-shortcut d-none emsp-open-login-modal"
+                               href="<?= h($loginModalEntryHref) ?>"
+                               data-bs-toggle="modal"
+                               data-bs-target="#emspQuickLoginModal"
+                               data-emsp-modal-link="1"
+                               aria-label="Connexion rapide"
+                               title="Connexion">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                            </a>
+                        <?php endif; ?>
+                        <?php if ($showGuestRegisterButton): ?>
+                            <a class="btn btn-sm emsp-icon-btn emsp-mobile-auth-shortcut emsp-mobile-register-shortcut d-none"
+                               href="<?= $base ?>register"
+                               aria-label="Inscription rapide"
+                               title="Inscription">
+                                <i class="bi bi-person-plus-fill"></i>
+                            </a>
                         <?php endif; ?>
                     <?php else: ?>
                         <div class="emsp-navbar-actions-group emsp-navbar-actions-group--tools">
@@ -396,12 +383,12 @@ $topbarStaticMessage = emsp_fix_mojibake($topbarStaticMessage);
                                 </span>
                                 <i class="bi bi-chevron-right emsp-mobile-account-shortcut__chevron" aria-hidden="true"></i>
                             </a>
-                            <a class="btn btn-sm emsp-icon-btn emsp-navbar-notifications d-none d-xl-inline-flex" href="<?= $base ?>dashboard#notifications" data-emsp-notif-trigger data-emsp-notif-label="Notifications" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications<?= $notifCount > 0 ? ' (' . ($notifCount > 99 ? '99+' : $notifCount) . ' non lues)' : '' ?>" aria-label="Notifications<?= $notifCount > 0 ? ' (' . ($notifCount > 99 ? '99+' : $notifCount) . ' non lues)' : '' ?>">
+                            <button type="button" class="btn btn-sm emsp-icon-btn emsp-navbar-notifications d-none d-xl-inline-flex" data-emsp-notif-trigger data-emsp-notif-label="Notifications" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications<?= $notifCount > 0 ? ' (' . ($notifCount > 99 ? '99+' : $notifCount) . ' non lues)' : '' ?>" aria-label="Notifications<?= $notifCount > 0 ? ' (' . ($notifCount > 99 ? '99+' : $notifCount) . ' non lues)' : '' ?>" aria-haspopup="dialog" aria-expanded="false" aria-controls="emspNotifPanel">
                                 <i class="bi bi-bell-fill"></i>
                                 <?php if ($notifCount > 0): ?>
                                     <span class="emsp-navbar-notifications__badge"><?= $notifCount > 99 ? '99+' : $notifCount ?></span>
                                 <?php endif; ?>
-                            </a>
+                            </button>
                         <?php else: ?>
                             <a class="btn btn-sm emsp-btn-outline" href="<?= $base ?>pending-status">
                                 <i class="bi bi-hourglass-split me-1"></i>Suivi du compte
@@ -462,23 +449,29 @@ $topbarStaticMessage = emsp_fix_mojibake($topbarStaticMessage);
                     </div>
 
                     <?php if ($isActiveAccount): ?>
-                        <a
+                        <button
+                            type="button"
                             class="btn btn-sm emsp-icon-btn emsp-navbar-notifications emsp-navbar-notifications--mobile d-xl-none"
-                            href="<?= $base ?>dashboard#notifications"
                             data-emsp-notif-trigger
                             data-emsp-notif-label="Notifications"
                             aria-label="Notifications<?= $notifCount > 0 ? ' (' . ($notifCount > 99 ? '99+' : $notifCount) . ' non lues)' : '' ?>"
                             title="Notifications<?= $notifCount > 0 ? ' (' . ($notifCount > 99 ? '99+' : $notifCount) . ' non lues)' : '' ?>"
+                            aria-haspopup="dialog"
+                            aria-expanded="false"
+                            aria-controls="emspNotifPanel"
                         >
                             <i class="bi bi-bell-fill" aria-hidden="true"></i>
                             <?php if ($notifCount > 0): ?>
                                 <span class="emsp-navbar-notifications__badge"><?= $notifCount > 99 ? '99+' : $notifCount ?></span>
                             <?php endif; ?>
-                        </a>
+                        </button>
                     <?php elseif (!$isAuth): ?>
                         <a
-                            class="btn btn-sm emsp-icon-btn emsp-navbar-notifications emsp-navbar-notifications--mobile emsp-navbar-notifications--guest d-xl-none"
-                            href="<?= $base ?>login"
+                            class="btn btn-sm emsp-icon-btn emsp-navbar-notifications emsp-navbar-notifications--mobile emsp-navbar-notifications--guest d-xl-none emsp-open-login-modal"
+                            href="<?= h($loginModalEntryHref) ?>"
+                            data-bs-toggle="modal"
+                            data-bs-target="#emspQuickLoginModal"
+                            data-emsp-modal-link="1"
                             data-emsp-notif-trigger
                             data-emsp-notif-label="Alertes"
                             aria-label="Connectez-vous pour voir vos alertes"
@@ -510,6 +503,8 @@ $topbarStaticMessage = emsp_fix_mojibake($topbarStaticMessage);
         <?php endif; ?>
     </div>
 </header>
+
+<?php require __DIR__ . '/partials/notifications-dropdown.php'; ?>
 
 <div class="offcanvas offcanvas-start emsp-navbar-offcanvas" tabindex="-1" id="emspMainOffcanvas" aria-labelledby="emspMainOffcanvasLabel">
     <div class="offcanvas-header">
@@ -606,7 +601,7 @@ $topbarStaticMessage = emsp_fix_mojibake($topbarStaticMessage);
                                 <a href="<?= $base ?>favoris"><i class="bi bi-star"></i>Mes favoris</a>
                                 <a href="<?= $base ?>historique"><i class="bi bi-clock-history"></i>Historique</a>
                                 <a href="<?= $base ?>upload"><i class="bi bi-cloud-arrow-up"></i>Déposer un document</a>
-                                <a href="<?= $base ?>dashboard#notifications"><i class="bi bi-bell"></i>Notifications<?= $notifCount > 0 ? ' (' . ($notifCount > 99 ? '99+' : $notifCount) . ')' : '' ?></a>
+                                <button type="button" class="border-0 bg-transparent p-0 text-inherit w-100 text-start" data-emsp-notif-trigger data-emsp-notif-label="Notifications"><i class="bi bi-bell"></i>Notifications<?= $notifCount > 0 ? ' (' . ($notifCount > 99 ? '99+' : $notifCount) . ')' : '' ?></button>
                             <?php endif; ?>
                             <?php if ($canAccessAdmin): ?>
                                 <a href="<?= $base ?>admin/journal"><i class="bi bi-speedometer2"></i>Administration</a>
@@ -705,8 +700,9 @@ $topbarStaticMessage = emsp_fix_mojibake($topbarStaticMessage);
                         <img src="<?= $asset ?>images/logo-emsp.png" alt="Logo EMSP" loading="lazy">
                     </div>
                     <div class="emsp-login-modal-form-wrap">
-                        <form action="<?= $base ?>login" method="post" class="emsp-login-modal-form" data-emsp-submit="1">
+                        <form action="<?= $base ?>login" method="post" class="emsp-login-modal-form" data-emsp-ajax-login="1" novalidate>
                         <?php csrf_input(); ?>
+                        <div class="alert alert-danger emsp-login-modal__error d-none mb-3" role="alert" aria-live="polite"></div>
                         <label for="emspQuickLoginEmail" class="form-label">Email</label>
                         <input type="email" id="emspQuickLoginEmail" name="email" class="form-control" required autocomplete="email" placeholder="nom@ecole.com">
 
