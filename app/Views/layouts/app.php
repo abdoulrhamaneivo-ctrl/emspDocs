@@ -16,9 +16,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="mobile-web-app-capable" content="yes">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= asset('css/emsp-fonts.css') ?>?v=<?= h(asset_version()) ?>">
 
     <!-- Meme pile CSS que le reste du site (assets/css), chargee dans le
@@ -50,6 +47,9 @@ if ($__layoutRoute === '') {
 }
 $__layoutRouteSlug = preg_replace('/[^a-z0-9]+/i', '-', preg_replace('/\.php$/i', '', $__layoutRoute));
 $__layoutBodyClasses = ['theme-harvard', 'emsp-route-' . trim((string) $__layoutRouteSlug, '-')];
+if (in_array($__layoutRoute, ['mon-profil', 'profil-public'], true)) {
+    $__layoutBodyClasses[] = 'emsp-profile-chrome';
+}
 if (function_exists('emsp_should_show_mobile_bottom_nav') && emsp_should_show_mobile_bottom_nav()) {
     $__layoutBodyClasses[] = 'emsp-mobile-bottom-nav-enabled';
 }
@@ -84,7 +84,7 @@ window.__emspPwaConfig = {
 };
 </script>
 <script src="<?= asset('js/emsp-shell-init.js') ?>"></script>
-<script src="<?= asset('js/pwa.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/pwa.js') ?>?v=<?= h(asset_version()) ?>"></script>
 <?php
 /*
  * Push notifications are an optional enhancement for authenticated pages.
@@ -135,20 +135,7 @@ if ($__layoutAuth) {
 </script>
 <?php endif; ?>
 
-<?php
-// Use the same navigation implementation as the legacy frontend so desktop,
-// tablet and mobile never drift into two competing UI systems.
-// The navigation also contains the guest quick-login form.  It relies on the
-// legacy csrf_input() helper, which is not part of the MVC bootstrap.
-require_once dirname(__DIR__, 3) . '/includes/csrf.php';
-if (function_exists('flash_render')) {
-    flash_render();
-} else {
-    foreach ($flashes as $f): ?>
-        <div class="alert alert-<?= h($f['type']) ?>"><?= h($f['message']) ?></div>
-    <?php endforeach;
-}
-?>
+<?php require_once dirname(__DIR__, 3) . '/includes/csrf.php'; ?>
 <?php require dirname(__DIR__, 3) . '/includes/partials/desktop-mobile-hint.php'; ?>
 <?php require dirname(__DIR__, 3) . '/includes/navbar.php'; ?>
 <?php require dirname(__DIR__, 3) . '/includes/banner.php'; ?>
@@ -186,18 +173,26 @@ if (function_exists('flash_render')) {
 <script src="<?= asset('vendor/sweetalert2/sweetalert2.all.min.js') ?>"></script>
 <script src="<?= asset('vendor/select2/select2.full.min.js') ?>"></script>
 <script src="<?= asset('js/jspdf.umd.min.js') ?>"></script>
+<?php if (function_exists('flash_render')) {
+    flash_render($flashes ?? []);
+} ?>
 <script src="<?= asset('js/emsp-flash.js') ?>?v=<?= h(asset_version()) ?>"></script>
 <script src="<?= asset('js/emsp-ui.js') ?>"></script>
+<?php if (!$__layoutAuth): ?>
+<script src="<?= asset('js/emsp-login-modal.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<?php endif; ?>
 <script src="<?= asset('js/emsp-fixes.js') ?>"></script>
-<script src="<?= asset('js/emsp-scanner.js') ?>?v=<?= h(asset_version()) ?>"></script>
-<script src="<?= asset('js/emsp-desktop-mobile-hint.js') ?>?v=<?= h(asset_version()) ?>"></script>
-<script src="<?= asset('js/emsp-mobile-fab.js') ?>?v=<?= h(asset_version()) ?>"></script>
-<script src="<?= asset('js/emsp-experience-upgrade.js') ?>?v=<?= h(asset_version()) ?>"></script>
-<script src="<?= asset('js/emsp-mediatheque-sheet.js') ?>?v=<?= h(asset_version()) ?>"></script>
-<script src="<?= asset('js/emsp-harvard-motion.js') ?>?v=<?= h(asset_version()) ?>"></script>
-<script src="<?= asset('js/emsp-motion.js') ?>?v=<?= h(asset_version()) ?>"></script>
-<script src="<?= asset('js/emsp-pdf-preview.js') ?>?v=<?= h(asset_version()) ?>"></script>
-<script src="<?= asset('js/emsp-modal-guard.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-scanner.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-desktop-mobile-hint.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-mobile-fab.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-experience-upgrade.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-navbar-enhance.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-mediatheque-sheet.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-mediatheque-preview-carousel.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-harvard-motion.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-motion.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-pdf-preview.js') ?>?v=<?= h(asset_version()) ?>"></script>
+<script defer src="<?= asset('js/emsp-modal-guard.js') ?>?v=<?= h(asset_version()) ?>"></script>
 <?php require dirname(__DIR__, 3) . '/includes/partials/notifications-shell.php'; ?>
 <?php if (!empty($page_scripts)) { echo $page_scripts; } ?>
 <?php require dirname(__DIR__, 3) . '/includes/partials/pwa-install.php'; ?>

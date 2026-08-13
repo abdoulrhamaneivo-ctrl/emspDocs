@@ -1,6 +1,6 @@
 /* EMSP Docs Service Worker — resilient PWA shell */
 // Cache version also invalidates retired stylesheet/font responses.
-const CACHE_VERSION = 'emsp-shell-20260813w';
+const CACHE_VERSION = 'emsp-shell-20260814ah';
 const OFFLINE_URL = './offline.php';
 
 function basePath() {
@@ -21,6 +21,7 @@ function shellUrls() {
     `${base}/assets/css/emsp-fixes.css`,
     `${base}/assets/css/emsp-editorial-shell.css`,
     `${base}/assets/css/docs-workspace.css`,
+    `${base}/assets/css/emsp-fonts.css`,
     `${base}/assets/js/bootstrap5.bundle.min.js`,
     `${base}/assets/js/emsp-admin-shell.js`,
     `${base}/assets/js/emsp-modal-guard.js`,
@@ -32,6 +33,10 @@ function shellUrls() {
     `${base}/assets/images/logo-emsp-192.png`,
     `${base}/assets/images/logo-emsp-512.png`
   ];
+}
+
+function isValidCacheResponse(response) {
+  return !!response && response.ok && response.type !== 'opaque';
 }
 
 self.addEventListener('install', event => {
@@ -66,35 +71,85 @@ function isExcluded(url) {
   );
 }
 
+async function offlineFallback() {
+  const cache = await caches.open(CACHE_VERSION);
+  const offline = await cache.match(OFFLINE_URL);
+  if (offline) {
+    return offline;
+  }
+  return new Response('Offline', {
+    status: 503,
+    statusText: 'Service Unavailable',
+    headers: { 'Content-Type': 'text/plain; charset=UTF-8' }
+  });
+}
+
 async function networkFirst(request) {
   const cache = await caches.open(CACHE_VERSION);
   try {
     const response = await fetch(request);
-    if (response && response.ok) {
+    if (isValidCacheResponse(response)) {
       await cache.put(request, response.clone());
     }
-    return response;
+    if (response) {
+      return response;
+    }
   } catch (error) {
-    return (await cache.match(request)) || (await cache.match(OFFLINE_URL));
+    // Fall through to cache/offline.
   }
+
+  const cached = await cache.match(request);
+  if (cached) {
+    return cached;
+  }
+
+  if (request.mode === 'navigate' || request.destination === 'document') {
+    return offlineFallback();
+  }
+
+  return Response.error();
 }
 
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(CACHE_VERSION);
   const cached = await cache.match(request);
-  const network = fetch(request).then(response => {
-    if (response && response.ok) cache.put(request, response.clone());
-    return response;
-  }).catch(() => null);
-  return cached || network || Response.error();
+
+  try {
+    const response = await fetch(request);
+    if (isValidCacheResponse(response)) {
+      await cache.put(request, response.clone());
+    }
+    return cached || response || Response.error();
+  } catch (error) {
+    return cached || Response.error();
+  }
+}
+
+async function networkPassthrough(request) {
+  try {
+    const response = await fetch(request);
+    if (response) {
+      return response;
+    }
+  } catch (error) {
+    // Fall through to cache.
+  }
+
+  const cache = await caches.open(CACHE_VERSION);
+  const cached = await cache.match(request);
+  return cached || Response.error();
 }
 
 self.addEventListener('fetch', event => {
   const request = event.request;
-  if (request.method !== 'GET') return;
+  if (request.method !== 'GET') {
+    return;
+  }
 
   const url = new URL(request.url);
-  if (!isSameOrigin(url) || isExcluded(url)) return;
+  if (!isSameOrigin(url) || isExcluded(url)) {
+    return;
+  }
 
   // HTML/navigation: prefer fresh content, fall back to cache/offline.
   if (request.mode === 'navigate' || request.destination === 'document') {
@@ -108,12 +163,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Passthrough réseau pour les autres GET same-origin (installabilité Chrome).
-  event.respondWith(
-    fetch(request).catch(function () {
-      return caches.match(request);
-    })
-  );
+  event.respondWith(networkPassthrough(request));
 });
 
 self.addEventListener('push', event => {

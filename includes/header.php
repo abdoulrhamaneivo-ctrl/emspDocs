@@ -105,9 +105,6 @@ $bodyIsAuthenticated = !empty($_SESSION['auth']) || !empty($_SESSION['auth_user'
     <link rel="shortcut icon" href="<?= h($faviconHref) ?>" type="image/png">
     <link rel="apple-touch-icon" href="<?= h($asset) ?>images/logo-emsp-192.png">
     <?php endif; ?>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <?php $__av = asset_version(); ?>
     <link rel="stylesheet" href="<?= $asset ?>css/emsp-fonts.css?v=<?= h($__av) ?>">
     <!-- Bootstrap local -->
@@ -142,7 +139,7 @@ window.__emspPwaConfig = {
 };
 </script>
 <script src="<?= $asset ?>js/emsp-shell-init.js"></script>
-<script src="<?= $asset ?>js/pwa.js?v=<?= h($__av) ?>"></script>
+<script defer src="<?= $asset ?>js/pwa.js?v=<?= h($__av) ?>"></script>
 <?php if (!empty($_SESSION['auth_user']['id'])): ?>
 <script src="<?= $asset ?>js/emsp-push.js"></script>
 <?php

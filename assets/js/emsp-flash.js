@@ -1,6 +1,9 @@
 (function (window, document) {
   'use strict';
 
+  var ROOT_ID = 'emsp-flash-root';
+  var LEGACY_ROOT_ID = 'flash-container';
+
   var ICONS = {
     success: 'bi-check-circle-fill',
     error: 'bi-exclamation-circle-fill',
@@ -9,7 +12,7 @@
     info: 'bi-info-circle-fill'
   };
 
-  var AUTO_DISMISS_MS = 5000;
+  var AUTO_DISMISS_MS = 4500;
   var TRANSITION_MS = 260;
   var payloadConsumed = false;
 
@@ -32,12 +35,16 @@
   }
 
   function ensureContainer() {
-    var container = document.getElementById('flash-container');
+    var container = document.getElementById(ROOT_ID) || document.getElementById(LEGACY_ROOT_ID);
     if (container) {
+      if (container.id === LEGACY_ROOT_ID) {
+        container.id = ROOT_ID;
+      }
       return container;
     }
+
     container = document.createElement('div');
-    container.id = 'flash-container';
+    container.id = ROOT_ID;
     container.setAttribute('role', 'region');
     container.setAttribute('aria-live', 'polite');
     container.setAttribute('aria-label', 'Notifications');
@@ -60,7 +67,7 @@
     }
 
     node.style.opacity = '0';
-    node.style.transform = 'translateY(-10px)';
+    node.style.transform = 'translateX(12px)';
     window.setTimeout(function () {
       if (node.parentNode) {
         node.parentNode.removeChild(node);
@@ -70,10 +77,12 @@
 
   function showFlash(data) {
     var type = normalizeType(data && data.type);
-    var title = (data && data.title) ? String(data.title) : '';
-    var message = (data && data.message) ? String(data.message) : '';
+    var title = (data && data.title) ? String(data.title).trim() : '';
+    var message = (data && data.message) ? String(data.message).trim() : '';
     var actionUrl = (data && data.action_url) ? String(data.action_url) : '';
     var actionLabel = (data && data.action_label) ? String(data.action_label) : '';
+    var displayTitle = title || message;
+    var displayMessage = title ? message : '';
     var container = ensureContainer();
     var flash = document.createElement('div');
     var iconClass = ICONS[type] || ICONS.info;
@@ -83,8 +92,8 @@
     flash.innerHTML =
       '<span class="emsp-flash__icon"><i class="bi ' + iconClass + '" aria-hidden="true"></i></span>' +
       '<div class="emsp-flash__body">' +
-        (title ? '<div class="emsp-flash__title">' + escapeHtml(title) + '</div>' : '') +
-        (message ? '<div class="emsp-flash__msg">' + escapeHtml(message) + '</div>' : '') +
+        (displayTitle ? '<div class="emsp-flash__title">' + escapeHtml(displayTitle) + '</div>' : '') +
+        (displayMessage ? '<div class="emsp-flash__msg">' + escapeHtml(displayMessage) + '</div>' : '') +
         (actionUrl && actionLabel
           ? '<a class="emsp-flash__action" href="' + escapeHtml(actionUrl) + '">' + escapeHtml(actionLabel) + '</a>'
           : '') +

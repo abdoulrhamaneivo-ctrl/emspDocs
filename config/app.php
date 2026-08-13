@@ -12,7 +12,7 @@ $env = static function (string $key, string $default = ''): string {
 
 return [
     'name' => 'EMSP Docs',
-    'asset_version' => '20260813w',
+    'asset_version' => '20260814ah',
     'base_url' => $env('APP_URL'),
     'timezone' => 'Africa/Abidjan',
     'env' => $env('APP_ENV', 'production'),

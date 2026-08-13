@@ -12,9 +12,9 @@
     --color-border: #E0E0E0;
     --color-error: #C0392B;
     --color-success: #27AE60;
-    --font-serif: "Playfair Display", Georgia, serif;
-    --font-sans: "Lato", "Helvetica Neue", sans-serif;
-    --font-mono: "JetBrains Mono", monospace;
+    --font-serif: 'Plus Jakarta Sans', Georgia, 'Times New Roman', serif;
+    --font-sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 16px;
@@ -91,6 +91,7 @@
 /* ============================================================
    MESSAGES FLASH EMSP
    ============================================================ */
+#emsp-flash-root,
 #flash-container {
     position: fixed;
     top: calc(var(--total-top-offset, 80px) + env(safe-area-inset-top, 0px) + 10px);
@@ -187,7 +188,8 @@
 .dark-theme .emsp-flash__msg   { color: #94a3b8; }
 
 @media (max-width: 576px) {
-    #flash-container {
+    #emsp-flash-root,
+#flash-container {
         right: .75rem;
         left: .75rem;
         max-width: 100%;
@@ -1056,7 +1058,7 @@ h5,
     display: flex !important;
     flex-direction: row !important;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: .2rem;
     flex-wrap: nowrap;
 }
@@ -1770,9 +1772,10 @@ h5,
         gap: .12rem;
         min-width: 0;
         max-width: 100%;
-        width: 100%;
+        width: auto;
         flex-wrap: wrap;
         overflow: visible;
+        margin-inline: auto;
     }
 
     .emsp-nav-desktop .nav-item {

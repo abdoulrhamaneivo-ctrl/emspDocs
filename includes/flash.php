@@ -29,27 +29,43 @@ function flash_set(
     );
 }
 
-function flash_render(): void
+/**
+ * @param array<int, array<string, mixed>>|null $flashes Messages déjà consommés (MVC) ou null pour lire la session.
+ */
+function flash_render(?array $flashes = null): void
 {
-    if (empty($_SESSION['flash']) || !is_array($_SESSION['flash'])) {
+    if ($flashes === null) {
+        if (empty($_SESSION['flash']) || !is_array($_SESSION['flash'])) {
+            return;
+        }
+        $rawFlashes = $_SESSION['flash'];
+        unset($_SESSION['flash']);
+    } else {
+        $rawFlashes = $flashes;
+    }
+
+    if ($rawFlashes === []) {
         return;
     }
 
-    $rawFlashes = $_SESSION['flash'];
-    unset($_SESSION['flash']);
-
     $payload = [];
     foreach ($rawFlashes as $flash) {
+        $title = emsp_fix_mojibake((string) ($flash['title'] ?? ''));
+        $message = emsp_fix_mojibake((string) ($flash['message'] ?? ''));
+        if ($message === '' && $title !== '') {
+            $message = $title;
+            $title = '';
+        }
+
         $payload[] = [
             'type' => (string) ($flash['type'] ?? 'info'),
-            'title' => emsp_fix_mojibake((string) ($flash['title'] ?? '')),
-            'message' => emsp_fix_mojibake((string) ($flash['message'] ?? '')),
+            'title' => $title,
+            'message' => $message,
             'action_url' => (string) ($flash['action_url'] ?? ''),
             'action_label' => emsp_fix_mojibake((string) ($flash['action_label'] ?? '')),
         ];
     }
 
-    echo '<div id="flash-container"></div>';
     echo '<script type="application/json" id="emsp-flash-payload">'
         . json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE)
         . '</script>';

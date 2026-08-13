@@ -20,63 +20,29 @@
   font-display: swap;
 }
 @font-face {
-  font-family: 'JetBrains Mono';
-  src: local('JetBrains Mono'), local('JetBrainsMono-Regular');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Canela Web';
-  src: url('../fonts/harvard/canela/Canela-Regular-Web.woff2') format('woff2'),
-       url('../fonts/harvard/canela/Canela-Regular-Web.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Canela Deck Web';
-  src: url('../fonts/harvard/canela/CanelaDeck-Regular-Web.woff2') format('woff2'),
-       url('../fonts/harvard/canela/CanelaDeck-Regular-Web.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'GT America Standard';
-  src: url('../fonts/harvard/gt-america/GT-America-Standard-Regular.woff2') format('woff2'),
-       url('../fonts/harvard/gt-america/GT-America-Standard-Regular.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'GT America Standard';
-  src: url('../fonts/harvard/gt-america/GT-America-Standard-Regular-Italic.woff2') format('woff2'),
-       url('../fonts/harvard/gt-america/GT-America-Standard-Regular-Italic.woff') format('woff');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'GT America Standard';
-  src: url('../fonts/harvard/gt-america/GT-America-Standard-Medium.woff2') format('woff2'),
-       url('../fonts/harvard/gt-america/GT-America-Standard-Medium.woff') format('woff');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'GT America Standard';
-  src: url('../fonts/harvard/gt-america/GT-America-Standard-Bold.woff2') format('woff2'),
-       url('../fonts/harvard/gt-america/GT-America-Standard-Bold.woff') format('woff');
+  font-family: 'Plus Jakarta Sans';
+  src: url('../fonts/PlusJakartaSans-Bold.woff2') format('woff2');
   font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('../fonts/PlusJakartaSans-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../fonts/JetBrainsMono-Regular.woff2') format('woff2');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 :root {
-  --font-display : 'Inter', -apple-system, 'Segoe UI', sans-serif;
+  --font-display : 'Plus Jakarta Sans', Georgia, 'Times New Roman', serif;
   --font-body    : 'Inter', -apple-system, 'Segoe UI', sans-serif;
   --font-mono    : 'JetBrains Mono', 'Courier New', monospace;
 
@@ -103,9 +69,11 @@
 html.theme-harvard,
 body.theme-harvard,
 :root.theme-harvard {
-  --font-display: 'Canela Deck Web', 'Canela Web', 'Crimson Pro', Georgia, 'Times New Roman', serif;
-  --font-body: 'GT America Standard', 'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-serif: 'Plus Jakarta Sans', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
   --text-base: .9375rem;
   --leading-normal: 1.65;
   --leading-relaxed: 1.72;

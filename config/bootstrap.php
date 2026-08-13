@@ -121,8 +121,8 @@ function asset(string $path): string
 
 function asset_version(): string
 {
-    $version = config('asset_version', '20260813w');
-    return $version !== '' ? (string) $version : '20260813w';
+    $version = config('asset_version', '20260814ah');
+    return $version !== '' ? (string) $version : '20260814ah';
 }
 
 /** Image publique : dossier racine /image/ en priorité, sinon assets/images/. */
@@ -263,3 +263,6 @@ function require_role(array $roles): void
 // Toujours nécessaires même sur les routes 100% MVC qui ne passent pas par
 // le pont mysqli legacy (App\Core\LegacyDb).
 require_once $rootDir . '/includes/bootstrap.php';
+
+// --- 8. Toasts flash (overlay, sans reflow layout) ---
+require_once $rootDir . '/includes/flash.php';
