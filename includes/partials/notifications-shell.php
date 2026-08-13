@@ -19,12 +19,13 @@ if (!function_exists('csrf_token')) {
 window.__emspNotifConfig = <?= json_encode([
     'authenticated' => $__notifActive,
     'unreadUrl' => $__notifBase . 'notifications/unread-count',
+    'recentUrl' => $__notifBase . 'notifications/recent',
     'markReadUrl' => $__notifBase . 'notifications/mark-read',
     'appBase' => $__notifBase,
     'pollInterval' => 60000,
     'csrfToken' => $__notifActive ? csrf_token() : '',
     'loginUrl' => $__notifBase . 'login',
-    'dashboardUrl' => $__notifBase . 'dashboard#notifications',
+    'dashboardUrl' => $__notifBase . 'dashboard',
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 </script>
-<script src="<?= function_exists('asset') ? asset('js/emsp-notifications.js') : ($__notifBase . 'assets/js/emsp-notifications.js') ?>?v=<?= h(function_exists('asset_version') ? asset_version() : (defined('EMSP_ASSET_VERSION') ? EMSP_ASSET_VERSION : '20260813w')) ?>"></script>
+<script defer src="<?= function_exists('asset') ? asset('js/emsp-notifications.js') : ($__notifBase . 'assets/js/emsp-notifications.js') ?>?v=<?= h(function_exists('asset_version') ? asset_version() : (defined('EMSP_ASSET_VERSION') ? EMSP_ASSET_VERSION : '20260814ah')) ?>"></script>
