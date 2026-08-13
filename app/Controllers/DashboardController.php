@@ -15,6 +15,11 @@ final class DashboardController extends Controller
     {
         require_auth();
 
+        if (!empty($_SESSION['message'])) {
+            flash('info', (string) $_SESSION['message']);
+            unset($_SESSION['message']);
+        }
+
         $con = LegacyDb::mysqli();
         require_once dirname(__DIR__, 2) . '/includes/notif-helper.php';
 
@@ -89,18 +94,8 @@ final class DashboardController extends Controller
             mysqli_stmt_close($stats_s);
         }
 
-        // -- Notifications --
+        // -- Compteur notifications (liste via dropdown navbar / API) --
         $notifService = new NotificationService();
-        $notifs_res = $hasNotificationsTable ? $notifService->listRecent($uid, 20) : [];
-        foreach ($notifs_res as &$notifRow) {
-            foreach (['message', 'doc_title', 'from_first', 'from_last'] as $field) {
-                if (isset($notifRow[$field]) && is_string($notifRow[$field])) {
-                    $notifRow[$field] = emsp_fix_mojibake($notifRow[$field]);
-                }
-            }
-        }
-        unset($notifRow);
-
         $nb_unread = $hasNotificationsTable ? $notifService->unreadCount($uid) : 0;
         if ($hasNotificationsTable) {
             $notifService->syncSessionCounters($uid);
@@ -169,7 +164,7 @@ final class DashboardController extends Controller
         $badge_html = '';
         if (isset($badge_labels[$badge])) {
             $b = $badge_labels[$badge];
-            $badge_html = '<span class="badge ' . $b['class'] . ' me-2 align-middle">' . $b['label'] . '</span>';
+            $badge_html = '<span class="badge ' . $b['class'] . '">' . $b['label'] . '</span>';
         }
         $type_colors = [
             'cours'      => 'bg-primary',
@@ -184,7 +179,6 @@ final class DashboardController extends Controller
             'badge_html' => $badge_html,
             'mes_docs' => $mes_docs,
             'stats' => $stats,
-            'notifs_res' => $notifs_res,
             'nb_unread' => $nb_unread,
             'recent_activity' => $recent_activity,
             'type_colors' => $type_colors,

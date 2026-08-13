@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Core\Database;
 use App\Core\Controller;
 use App\Core\LegacyDb;
+use App\Repositories\AcademicRepository;
 use App\Repositories\UserRepository;
 
 final class ProfileController extends Controller
@@ -31,9 +32,13 @@ final class ProfileController extends Controller
             emsp_session_sync_auth_user($user);
         }
 
+        $academic = new AcademicRepository(Database::pdo());
+
         $this->view('profile/show', [
             'user' => $user,
             'stats' => $users->profileStats($uid),
+            'filieres' => $academic->activeFilieres(),
+            'licences' => $academic->activeLicences(),
             'badgeLabels' => ['or' => 'Badge Or', 'argent' => 'Badge Argent', 'bronze' => 'Badge Bronze', 'none' => 'Aucun badge'],
         ]);
     }
@@ -125,6 +130,36 @@ final class ProfileController extends Controller
         }
 
         $action = (string) ($_POST['action'] ?? '');
+
+        if ($action === 'update_academic') {
+            $filiereRaw = (string) ($_POST['filiere_id'] ?? '');
+            $isTroncCommun = $filiereRaw === (string) emsp_tronc_commun_filiere_value();
+            $filiereId = $isTroncCommun ? null : (((int) $filiereRaw) ?: null);
+            $licenceId = (int) ($_POST['licence_id'] ?? 0) ?: null;
+
+            if (!$isTroncCommun && ($filiereId === null || $filiereId <= 0)) {
+                flash('danger', 'Veuillez choisir une filière ou le tronc commun.');
+                redirect('mon-profil');
+            }
+            if ($licenceId === null || $licenceId <= 0) {
+                flash('danger', 'Veuillez choisir un niveau.');
+                redirect('mon-profil');
+            }
+
+            $academic = new AcademicRepository(Database::pdo());
+            if (!$isTroncCommun && !$academic->filiereIsActive((int) $filiereId)) {
+                flash('danger', "Cette filière n'est pas disponible.");
+                redirect('mon-profil');
+            }
+            if (!$academic->licenceIsActive((int) $licenceId)) {
+                flash('danger', "Ce niveau n'est pas disponible.");
+                redirect('mon-profil');
+            }
+
+            $users->updateAcademic($uid, $filiereId, $licenceId);
+            flash('success', 'Vos informations académiques ont été mises à jour.');
+            redirect('mon-profil');
+        }
 
         if ($action === 'update_profile') {
             $firstName = trim((string) ($_POST['first_name'] ?? ''));
